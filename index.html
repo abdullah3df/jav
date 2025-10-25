@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AI Studio — محرّر ومعاينة + تسجيل دخول</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f6f8fb; --surface:#fff; --ink:#1f2937; --muted:#6b7280; --border:#e5e7eb;
+      --primary:#1a73e8; --primary-ink:#0b57d0; --ok:#1fa362; --warn:#ea4335; --chip:#eef3fd;
+      --shadow:0 1px 2px rgba(16,24,40,.06), 0 2px 8px rgba(16,24,40,.08);
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; background:var(--bg); color:var(--ink);
+      font-family:"Cairo",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+    }
+    .appbar{position:sticky;top:0;z-index:10;background:var(--surface);border-bottom:1px solid var(--border)}
+    .row{max-width:1280px;margin:auto;display:flex;align-items:center;gap:12px;padding:10px 16px}
+    .logo{width:36px;height:36px;border-radius:10px;background:conic-gradient(from 140deg,#1a73e8,#34a853,#fbbc04,#ea4335,#1a73e8);box-shadow:inset 0 0 0 2px #ffffffaa}
+    .brand{font-weight:700}
+    .spacer{flex:1}
+    .btn{border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px;box-shadow:var(--shadow)}
+    .btn.primary{color:#fff;background:linear-gradient(180deg,#1a73e8,#0b57d0)}
+    .btn.ghost{background:#e8f0fe;color:#174ea6}
+    .pill{padding:6px 10px;border-radius:999px;background:#f5f7fb;border:1px solid var(--border);color:#64748b;font-size:12px}
+
+    .layout{max-width:1280px;margin:auto;display:grid;grid-template-columns:1.2fr 1fr .9fr;gap:16px;padding:16px}
+    @media (max-width:1200px){.layout{grid-template-columns:1fr}}
+
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;min-height:0}
+    .card-head{display:flex;align-items:center;gap:12px;padding:12px 14px;border-bottom:1px solid var(--border);background:linear-gradient(180deg,#fafbff,#fff)}
+    .card-body{padding:12px;display:flex;flex-direction:column;gap:10px;min-height:0}
+    .tabs{display:flex;gap:8px;padding:8px 10px;border-bottom:1px solid var(--border);background:#fbfdff}
+    .tab{padding:8px 12px;border-radius:10px;border:1px solid var(--border);background:#f7fafc;font-weight:700;color:#334155;cursor:pointer}
+    .tab.active{background:#e8f0fe;border-color:#c1d5ff;color:#174ea6}
+    .editor{position:relative;height:360px;display:none}
+    .editor.active{display:block}
+    textarea{position:absolute;inset:0;width:100%;height:100%;border:none;outline:none;resize:none;background:#fcfdff;color:#111827;font:14px/1.6 ui-monospace,Consolas,monospace;padding:14px}
+    .statusbar{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-top:1px solid var(--border);background:#fbfdff;color:#6b7280;font-size:12px}
+    iframe{border:1px solid var(--border);border-radius:12px;background:#fff;width:100%;height:460px}
+    .chips{display:flex;gap:8px;flex-wrap:wrap}
+    .chip{padding:8px 12px;border-radius:999px;border:1px solid #d9e1f2;background:var(--chip);color:#174ea6;font-weight:600;cursor:pointer}
+    .chip.active{background:#e8f0fe;border-color:#c1d5ff;color:#0b57d0}
+    .ai-input{width:100%;min-height:120px;border:1px solid var(--border);border-radius:12px;padding:12px;background:#fcfdff}
+    .ai-output{border:1px dashed #cfd8e3;background:#fafcff;border-radius:12px;min-height:140px;padding:10px;white-space:pre-wrap;font:13px/1.6 ui-monospace,Consolas,monospace;overflow:auto}
+
+    /* Login overlay */
+    .overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.35);backdrop-filter:blur(2px);z-index:50}
+    .overlay.show{display:flex}
+    .login{width:560px;max-width:92vw;background:var(--surface);border:1px solid var(--border);border-radius:18px;box-shadow:var(--shadow);padding:18px}
+    .login h2{margin:0 0 8px}
+    .field{display:flex;gap:8px}
+    .field input{flex:1;border:1px solid var(--border);border-radius:12px;padding:12px 14px;font-size:14px}
+
+    .muted{color:var(--muted)}
+  </style>
+</head>
+<body>
+  <!-- App Bar -->
+  <div class="appbar">
+    <div class="row">
+      <div class="logo"></div>
+      <div class="brand">AI Studio — محرّر ومعاينة</div>
+      <div class="spacer"></div>
+      <span id="sessionBadge" class="pill">غير مسجّل</span>
+      <button id="loginBtn" class="btn ghost">تسجيل الدخول</button>
+      <button id="logoutBtn" class="btn" style="display:none">تسجيل الخروج</button>
+    </div>
+  </div>
+
+  <!-- Login Overlay -->
+  <div class="overlay" id="loginOverlay" aria-modal="true" role="dialog">
+    <div class="login">
+      <h2>تسجيل الدخول إلى واجهة OpenAI</h2>
+      <p class="muted">أدخل <b>OpenAI API Key</b> الخاص بك. سيتم حفظه داخل <b>Session Cookie</b> آمنة على السيرفر — لن يُخزّن في المتصفح.</p>
+      <div class="field">
+        <input id="apiKey" type="password" placeholder="sk-..." autocomplete="off" />
+        <button id="submitKey" class="btn primary">متابعة</button>
+      </div>
+      <p class="muted" style="margin-top:8px">لا تمتلك مفتاحًا؟ أنشئه من لوحة حساب OpenAI.</p>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="layout">
+    <!-- الموديل & أوامر AI -->
+    <section class="card">
+      <div class="card-head">
+        <h3>الموديل & الأوامر</h3>
+        <div class="spacer"></div>
+        <button id="runBtn" class="btn ghost" title="تشغيل (Ctrl+Enter)">تشغيل</button>
+      </div>
+      <div class="card-body">
+        <div class="chips" id="modelChips">
+          <div class="chip active" data-model="gpt-4.1">gpt-4.1</div>
+          <div class="chip" data-model="gpt-4o">gpt-4o</div>
+          <div class="chip" data-model="o4-mini">o4-mini</div>
+        </div>
+        <textarea id="aiPrompt" class="ai-input" placeholder="اكتب ما تريد أن يولّده/يعدّله الذكاء الاصطناعي..."></textarea>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <button id="aiAsk" class="btn primary">تنفيذ على الذكاء الاصطناعي</button>
+          <select id="aiTarget" class="pill">
+            <option value="current">إدراج في التبويب الحالي</option>
+            <option value="html">إلى HTML</option>
+            <option value="css">إلى CSS</option>
+            <option value="js">إلى JS</option>
+          </select>
+          <span id="aiStatus" class="pill">يتطلب تسجيل دخول</span>
+        </div>
+        <div id="aiOut" class="ai-output" aria-live="polite"></div>
+      </div>
+    </section>
+
+    <!-- المحرّر -->
+    <section class="card">
+      <div class="tabs">
+        <button class="tab active" data-tab="html">HTML</button>
+        <button class="tab" data-tab="css">CSS</button>
+        <button class="tab" data-tab="js">JS</button>
+        <div class="spacer"></div>
+        <label class="pill" style="display:flex;align-items:center;gap:8px">
+          <input type="checkbox" id="autoRun" checked /> تشغيل تلقائي
+        </label>
+      </div>
+      <div class="card-body" style="padding:0">
+        <div class="editor active" id="htmlPanel"><textarea id="htmlCode" placeholder="HTML هنا"></textarea></div>
+        <div class="editor" id="cssPanel"><textarea id="cssCode" placeholder="CSS هنا"></textarea></div>
+        <div class="editor" id="jsPanel"><textarea id="jsCode" placeholder="JavaScript هنا"></textarea></div>
+      </div>
+      <div class="statusbar">
+        <div>⌨️ اختصارات: <b>Ctrl+Enter</b> تشغيل — <b>Ctrl+S</b> تنزيل</div>
+        <div id="lenInfo">0 سطر</div>
+      </div>
+    </section>
+
+    <!-- المعاينة -->
+    <section class="card">
+      <div class="card-head">
+        <h3>المعاينة</h3>
+        <div class="spacer"></div>
+        <label class="pill" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="optTailwind" checked> Tailwind</label>
+        <label class="pill" style="display:flex;gap:6px;align-items:center"><input type="checkbox" id="optResetCss"> Normalize</label>
+        <button id="downloadBtn" class="btn">تنزيل HTML</button>
+      </div>
+      <div class="card-body">
+        <iframe id="preview"></iframe>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // ===== Helpers
+    const $ = s => document.querySelector(s);
+    const htmlArea = $('#htmlCode'), cssArea = $('#cssCode'), jsArea = $('#jsCode');
+    const runBtn = $('#runBtn'), downloadBtn = $('#downloadBtn');
+    const autoRun = $('#autoRun'), optTailwind = $('#optTailwind'), optResetCss = $('#optResetCss');
+    const lenInfo = $('#lenInfo'), aiPrompt = $('#aiPrompt'), aiOut = $('#aiOut'), aiStatus = $('#aiStatus');
+    const aiAsk = $('#aiAsk'), aiTarget = $('#aiTarget'), modelChips = $('#modelChips');
+    const loginOverlay = $('#loginOverlay'), loginBtn = $('#loginBtn'), logoutBtn = $('#logoutBtn'), submitKey = $('#submitKey'), apiKeyInput = $('#apiKey'), sessionBadge = $('#sessionBadge');
+    const preview = $('#preview');
+    const tabs = document.querySelectorAll('.tab');
+
+    let currentModel = 'gpt-4.1';
+    let isLogged = false;
+
+    // ===== Session check
+    async function checkSession(){
+      try{
+        const r = await fetch('/api/session', { credentials:'include' });
+        const j = await r.json();
+        isLogged = !!j.logged_in;
+        sessionBadge.textContent = isLogged ? 'مسجّل' : 'غير مسجّل';
+        aiStatus.textContent = isLogged ? 'جاهز' : 'يتطلب تسجيل دخول';
+        loginBtn.style.display = isLogged ? 'none' : 'inline-flex';
+        logoutBtn.style.display = isLogged ? 'inline-flex' : 'none';
+      }catch{
+        isLogged = false;
+      }
+    }
+
+    // ===== Login / Logout
+    loginBtn.addEventListener('click', ()=>{ loginOverlay.classList.add('show'); apiKeyInput.focus(); });
+    loginOverlay.addEventListener('click', (e)=>{ if(e.target===loginOverlay) loginOverlay.classList.remove('show'); });
+    submitKey.addEventListener('click', async ()=>{
+      const key = apiKeyInput.value.trim();
+      if(!/^sk-[\w-]{10,}/.test(key)){ alert('أدخل مفتاح OpenAI صالح (sk-...)'); return; }
+      const r = await fetch('/api/login', {
+        method:'POST', headers:{'Content-Type':'application/json'}, credentials:'include',
+        body: JSON.stringify({ api_key: key })
+      });
+      if(r.ok){ loginOverlay.classList.remove('show'); apiKeyInput.value=''; await checkSession(); }
+      else { alert('فشل تسجيل الدخول. تحقق من المفتاح.'); }
+    });
+    logoutBtn.addEventListener('click', async ()=>{
+      await fetch('/api/logout', { method:'POST', credentials:'include' });
+      await checkSession();
+    });
+
+    // ===== Editor state
+    const LS = 'studio_like_secure_v1';
+    const defaults = {
+      html:`<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>مشروعي</title>
+</head>
+<body>
+  <main style="padding:24px">
+    <h1>مرحبًا 👋</h1>
+    <p>هذا محرّر شبيه بـ Google AI Studio — اكتب الكود وشاهد المعاينة.</p>
+    <button onclick="alert('Hi!')">زر تجريبي</button>
+  </main>
+</body>
+</html>`,
+      css:`body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial} h1{color:#1a73e8}
+button{background:#1a73e8;color:#fff;border:none;padding:.6rem 1rem;border-radius:.5rem;cursor:pointer}
+button:hover{filter:brightness(1.05)}`,
+      js:`console.log('Ready!');`
+    };
+    function load(){ try{ return JSON.parse(localStorage.getItem(LS)) ?? {...defaults} } catch { return {...defaults} } }
+    function save(){
+      localStorage.setItem(LS, JSON.stringify({ html:htmlArea.value, css:cssArea.value, js:jsArea.value }));
+    }
+    function updateLens(){
+      const lines = htmlArea.value.split('\n').length + cssArea.value.split('\n').length + jsArea.value.split('\n').length;
+      lenInfo.textContent = lines + ' سطر';
+    }
+
+    const state = load(); htmlArea.value=state.html; cssArea.value=state.css; jsArea.value=state.js;
+    updateLens();
+
+    // Tabs
+    tabs.forEach(t=>{
+      t.addEventListener('click', ()=>{
+        tabs.forEach(x=>x.classList.remove('active')); t.classList.add('active');
+        document.querySelectorAll('.editor').forEach(e=>e.classList.remove('active'));
+        document.getElementById(t.dataset.tab+'Panel').classList.add('active');
+      });
+    });
+
+    // Model chips
+    modelChips.addEventListener('click', (e)=>{
+      const chip = e.target.closest('.chip'); if(!chip) return;
+      modelChips.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+      chip.classList.add('active'); currentModel = chip.dataset.model;
+    });
+
+    // Preview
+    function bundle(){
+      const links=[];
+      if($('#optResetCss').checked) links.push('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">');
+      if($('#optTailwind').checked) links.push('<script src="https://cdn.tailwindcss.com"></script>');
+      const inj = `
+<style>
+${cssArea.value}
+</style>
+<script>
+${jsArea.value}
+<\/script>`;
+      const base = htmlArea.value;
+      if(/<\/head>/i.test(base)){
+        return base.replace(/<\/head>/i, links.join('\\n')+'\\n</head>').replace('</body>', inj+'\\n</body>');
+      }
+      return `<!DOCTYPE html><html><head>${links.join('\\n')}</head><body>${base}${inj}</body></html>`;
+    }
+    function runPreview(){
+      const doc = preview.contentDocument || preview.contentWindow.document;
+      doc.open(); doc.write(bundle()); doc.close();
+    }
+    runBtn.addEventListener('click', runPreview);
+    let debounce;
+    [htmlArea,cssArea,jsArea,$('#optTailwind'),$('#optResetCss')].forEach(el=>{
+      const evt = el.type==='checkbox' ? 'change' : 'input';
+      el.addEventListener(evt, ()=>{ save(); updateLens(); clearTimeout(debounce); if($('#autoRun').checked){ debounce=setTimeout(runPreview, 300);} });
+    });
+    window.addEventListener('keydown', (e)=>{
+      if((e.ctrlKey||e.metaKey) && e.key==='Enter'){ e.preventDefault(); runPreview(); }
+      if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='s'){ e.preventDefault(); download('project.html', bundle()); }
+    });
+    function download(name, text){
+      const blob = new Blob([text], {type:'text/html;charset=utf-8'}); const url=URL.createObjectURL(blob);
+      const a=document.createElement('a'); a.href=url; a.download=name; a.click(); URL.revokeObjectURL(url);
+    }
+    downloadBtn.addEventListener('click', ()=> download('project.html', bundle()));
+
+    // ===== AI
+    function activeArea(){
+      const tab = document.querySelector('.tab.active')?.dataset.tab || 'html';
+      return tab==='css'? cssArea : tab==='js'? jsArea : htmlArea;
+    }
+    function insert(text){
+      const target = $('#aiTarget').value;
+      const map = { current: activeArea(), html: htmlArea, css: cssArea, js: jsArea };
+      const area = map[target] || htmlArea;
+      const s = area.selectionStart ?? area.value.length, e = area.selectionEnd ?? area.value.length;
+      area.setRangeText(text, s, e, 'end'); area.dispatchEvent(new Event('input'));
+    }
+    aiAsk.addEventListener('click', async ()=>{
+      if(!isLogged){ alert('سجّل الدخول أولًا بمفتاح OpenAI.'); return; }
+      const prompt = aiPrompt.value.trim(); if(!prompt){ alert('اكتب طلبك للذكاء الاصطناعي.'); return; }
+      aiOut.textContent=''; aiStatus.textContent='يكتب...';
+      const sys = `
+أنت مساعد ترميز داخل محرّر شبيه بـ Google AI Studio.
+أجب بكود واضح ومباشر فقط بدون شروح طويلة. لو HTML/CSS/JS أرسل كتل نظيفة قابلة للصق.
+HTML (مختصر):
+${htmlArea.value.slice(0,1000)}
+
+CSS (مختصر):
+${cssArea.value.slice(0,800)}
+
+JS (مختصر):
+${jsArea.value.slice(0,800)}
+`.trim();
+      try{
+        const res = await fetch('/api/ai', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          credentials:'include',
+          body: JSON.stringify({ model: currentModel, system: sys, prompt })
+        });
+        if(!res.ok || !res.body){ aiStatus.textContent='خطأ اتصال'; return; }
+        const reader = res.body.getReader(); const dec = new TextDecoder();
+        while(true){
+          const {value, done} = await reader.read(); if(done) break;
+          aiOut.textContent += dec.decode(value, {stream:true});
+          aiOut.scrollTop = aiOut.scrollHeight;
+        }
+        aiStatus.textContent='جاهز';
+        // إدراج فوري (يمكن تعطيله لو تفضّل يدوي)
+        insert('\\n'+aiOut.textContent.trim()+'\\n');
+      }catch(e){
+        aiStatus.textContent='فشل الطلب'; aiOut.textContent += '\\n[حدث خطأ]';
+      }
+    });
+
+    // ===== Boot
+    (async function init(){
+      await checkSession();
+      runPreview();
+    })();
+  </script>
+</body>
+</html>
