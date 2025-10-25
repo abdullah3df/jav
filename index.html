@@ -3,393 +3,159 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Pro Preview — معاينة احترافية</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<!-- Babel للـ JSX (React) -->
-<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-
+<title>معاينة مضمونة</title>
 <style>
-  :root{
-    --bg:#0b0f17;--panel:#0f1626;--line:#22314d;--text:#e6edf3;--muted:#9aa6b2;--accent:#60a5fa;--green:#22c55e
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%}
-  body{margin:0;background:var(--bg);color:var(--text);font-family:"Cairo",system-ui,-apple-system,"Segoe UI",Roboto,Arial;display:flex;flex-direction:column}
-
-  /* App bar */
-  header{position:sticky;top:0;z-index:10;background:#0e1526cc;border-bottom:1px solid var(--line);backdrop-filter:saturate(1.1) blur(10px)}
-  .head{max-width:1500px;margin:auto;display:flex;gap:12px;align-items:center;padding:10px 14px}
-  .logo{width:30px;height:30px;border-radius:8px;background:conic-gradient(from 120deg,#3b82f6,#22c55e,#fde047,#f43f5e,#3b82f6)}
-  .brand{font-weight:800}
-  .spacer{flex:1}
-  .btn{border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
-  .btn.primary{background:linear-gradient(180deg,#22c55e,#16a34a);color:#fff}
-  .btn.save{background:linear-gradient(180deg,#60a5fa,#3b82f6);color:#fff}
-  .pill{display:inline-flex;align-items:center;gap:8px;background:#0b1220;border:1px solid #ffffff1a;color:#cbd5e1;padding:8px 12px;border-radius:999px;font-size:12px}
-
-  /* Layout: preview big (70%), editor small (30%) with resizer */
-  .wrap{max-width:1500px;margin:auto;display:grid;grid-template-columns:minmax(260px,34%) 1fr;gap:12px;padding:12px;flex:1;width:100%}
-  .col{background:linear-gradient(180deg,#0f1626,#0d1422);border:1px solid var(--line);border-radius:14px;display:flex;flex-direction:column;min-height:0}
-  .col.headed .toolbar{padding:10px;border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:#0e1a2c}
-  .resizer{width:8px;cursor:col-resize;background:linear-gradient(180deg,#0b1220,#0b1220);border:1px solid var(--line);border-radius:10px}
-  @media (max-width:1100px){ .wrap{grid-template-columns:1fr} .resizer{display:none} }
-
-  textarea{
-    height:100%;min-height:280px;background:#0b1220;color:#e6edf3;border:none;outline:none;resize:none;
-    font:14px/1.6 ui-monospace,Consolas,monospace;padding:14px
-  }
-  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-  select,input[type="text"],input[type="number"]{background:#0b1220;border:1px solid #ffffff1a;color:#e6edf3;border-radius:10px;padding:8px 10px;outline:none}
-
-  /* Preview side huge */
-  .stage{flex:1;display:flex;align-items:center;justify-content:center;padding:12px}
-  iframe{border:0;background:white;width:100%;height:100%;min-height:520px;border-radius:12px;box-shadow:0 0 0 1px #1b2742}
-  .codebox{flex:1;overflow:auto;border-top:1px solid var(--line);display:none}
-  pre{margin:0;padding:14px}
-
-  /* Status bar bottom editor */
-  .status{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-top:1px solid var(--line);color:#9fb3d9;font-size:12px}
+  body{margin:0;background:#0f172a;color:#e2e8f0;font:16px/1.6 system-ui,Segoe UI,Roboto,Arial}
+  header{padding:14px 18px;border-bottom:1px solid #1f2a44}
+  h1{margin:0;font-size:18px}
+  .wrap{max-width:1000px;margin:16px auto;display:grid;gap:12px;grid-template-columns:360px 1fr}
+  @media (max-width:900px){.wrap{grid-template-columns:1fr}}
+  .panel{background:#0b1220;border:1px solid #1f2a44;border-radius:12px;overflow:hidden}
+  .panel .head{padding:8px 10px;border-bottom:1px solid #1f2a44;background:#0e1a2c;display:flex;gap:8px;align-items:center}
+  .panel .body{padding:10px}
+  textarea{width:100%;height:280px;background:#0b1220;color:#e2e8f0;border:1px solid #22314d;border-radius:8px;padding:10px;resize:vertical;font-family:ui-monospace,Consolas,monospace}
+  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+  .btn{border:0;border-radius:10px;padding:9px 14px;font-weight:700;cursor:pointer}
+  .btn.run{background:#22c55e;color:#fff}
+  .btn.save{background:#3b82f6;color:#fff}
+  .btn.open{background:#0b1220;color:#cbd5e1;border:1px solid #22314d}
+  .pill{padding:6px 10px;border-radius:999px;background:#0b1220;border:1px solid #22314d;color:#cbd5e1;font-size:12px}
+  iframe{width:100%;height:520px;border:0;background:#fff;border-radius:12px}
 </style>
 </head>
 <body>
-  <header>
-    <div class="head">
-      <div class="logo"></div>
-      <div class="brand">Pro Preview — معاينة احترافية</div>
-      <div class="spacer"></div>
-      <span id="autosave" class="pill">💾 حفظ تلقائي</span>
-      <button id="runTop" class="btn primary">تشغيل</button>
-      <button id="downloadTop" class="btn save">تنزيل</button>
-    </div>
-  </header>
+  <header><h1>معاينة كود — تعمل دائمًا</h1></header>
 
   <div class="wrap">
-    <!-- Editor small column -->
-    <section class="col headed" id="leftCol">
-      <div class="toolbar">
-        <label class="pill">النوع:
-          <select id="mode">
-            <option value="auto" selected>تلقائي</option>
-            <option value="html">HTML (وثيقة كاملة)</option>
-            <option value="fragment">HTML (جزء)</option>
-            <option value="markdown">Markdown</option>
-            <option value="react">React (JSX)</option>
-            <option value="code">عرض كود (أي لغة)</option>
-          </select>
-        </label>
-        <label class="pill">لغة الصفحة:
-          <select id="pageLang">
-            <option value="ar|rtl" selected>Arabic (RTL)</option>
-            <option value="en|ltr">English (LTR)</option>
-          </select>
-        </label>
-        <label class="pill"><input type="checkbox" id="autoRun" checked> تشغيل تلقائي</label>
-        <div class="spacer"></div>
-        <input id="filename" type="text" value="index.html" title="اسم الملف عند التنزيل" />
+    <!-- الإدخال -->
+    <section class="panel">
+      <div class="head row">
+        <span class="pill">1) ألصِق كودك</span>
       </div>
-
-      <textarea id="code" placeholder="ألصِق كودك هنا (HTML/Markdown/JSX/أي لغة)."></textarea>
-
-      <div class="status">
-        <div>⌨️ Ctrl+Enter تشغيل — Ctrl+S تنزيل</div>
-        <div id="stats">0 سطر</div>
+      <div class="body">
+        <textarea id="code"><h1>مرحبًا 👋</h1>
+<p>هذا مثال. يمكنك وضع HTML كامل أو جزء HTML.</p>
+<button onclick="alert('عملت!')">جرّب التنبيه</button></textarea>
+        <div class="row" style="margin-top:10px">
+          <label class="pill"><input type="checkbox" id="autorun" checked> تشغيل تلقائي</label>
+          <button id="run" class="btn run">تشغيل</button>
+          <button id="open" class="btn open">فتح في نافذة</button>
+          <button id="save" class="btn save">تنزيل</button>
+        </div>
+        <small style="color:#94a3b8;display:block;margin-top:6px">اختصار: Ctrl+Enter للتشغيل — Ctrl+S للتنزيل</small>
       </div>
     </section>
 
-    <div class="resizer" id="resizer" title="اسحب لتغيير عرض المحرّر"></div>
-
-    <!-- Big preview column -->
-    <section class="col headed">
-      <div class="toolbar">
-        <span id="status" class="pill">جاهز</span>
-        <label class="pill">زوم:
-          <select id="zoom">
-            <option>100%</option><option selected>90%</option><option>80%</option><option>75%</option>
-            <option>67%</option><option>50%</option><option>40%</option>
-          </select>
-        </label>
-        <label class="pill"><input type="checkbox" id="useNormalize"> Normalize CSS</label>
-        <label class="pill"><input type="checkbox" id="useTailwind" checked> Tailwind</label>
-        <div class="spacer"></div>
-        <button id="openWin" class="btn">فتح في نافذة</button>
-        <button id="runBtn" class="btn primary">تشغيل</button>
+    <!-- المعاينة -->
+    <section class="panel">
+      <div class="head row">
+        <span class="pill" id="status">جاهز</span>
       </div>
-
-      <div class="stage">
-        <iframe id="frame" title="المعاينة"></iframe>
-        <div id="codeView" class="codebox"><pre><code id="hlcode" class="hljs"></code></pre></div>
+      <div class="body">
+        <iframe id="view" sandbox="allow-scripts allow-forms allow-modals allow-popups"></iframe>
       </div>
     </section>
   </div>
 
 <script>
   const $ = s => document.querySelector(s);
-  const codeEl = $('#code'), modeEl = $('#mode'), frame = $('#frame'), codeView = $('#codeView'), hlcode = $('#hlcode');
-  const statusEl = $('#status'), autosaveEl = $('#autosave'), statsEl = $('#stats');
-  const filenameEl = $('#filename'), autoRun = $('#autoRun'), openWin = $('#openWin');
-  const useNormalize = $('#useNormalize'), useTailwind = $('#useTailwind'), zoomSel = $('#zoom');
-  const pageLangSel = $('#pageLang');
-  const runTop = $('#runTop'), downloadTop = $('#downloadTop'), runBtn = $('#runBtn');
-  const resizer = $('#resizer'), leftCol = $('#leftCol');
+  const codeEl = $('#code'), view = $('#view'), statusEl = $('#status');
+  const runBtn = $('#run'), saveBtn = $('#save'), openBtn = $('#open'), autorun = $('#autorun');
 
-  const LS = 'pro_preview_state_v1';
-
-  function pad(n){return String(n).padStart(2,'0');}
-  function setStatus(t){ statusEl.textContent = t; }
-  function setAutosaveTip(msg='💾 حفظ تلقائي'){ autosaveEl.textContent = msg; setTimeout(()=> autosaveEl.textContent='💾 حفظ تلقائي', 800); }
-  function countLines(){ const l = codeEl.value.split('\n').length; statsEl.textContent = l + ' سطر'; }
-
-  // Detect mode automatically
-  function detectMode(text){
-    const t = text.trim();
-    if (/<!DOCTYPE|<html|<head|<body/i.test(t)) return 'html';
-    if (/<[a-z][\s\S]*>/i.test(t)) return 'fragment';
-    if (/^#{1,6} |```|\*\*.+\*\*|\[(.+?)\]\((.+?)\)/m.test(t)) return 'markdown';
-    if (/React|<\w+[^>]*\/>|className=|<App\/>|\(\)\s*=>\s*</.test(t)) return 'react';
-    return 'code';
-  }
-
-  // Build HTML from modes
-  function wrapFragment(inner, langDir){
-    const [lang, dir] = langDir.split('|');
+  // يلفّ أي جزء HTML بصفحة كاملة + meta viewport
+  function wrapIfNeeded(html){
+    const hasDoc = /<!DOCTYPE|<html[\s>]/i.test(html);
+    if (hasDoc) return ensureViewport(html);
     return `<!DOCTYPE html>
-<html lang="${lang}" dir="${dir}">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Preview</title>
 </head>
 <body>
-${inner}
+${html}
 </body>
 </html>`;
   }
-
-  function mdToHtml(md, langDir){
-    // simple markdown -> html with code fences
-    const fences = [];
-    md = md.replace(/```([\s\S]*?)```/g, (_,b)=>{ fences.push(b); return `__F_${fences.length-1}__`; });
-    md = md.replace(/^###### (.*)$/gm,'<h6>$1</h6>')
-           .replace(/^##### (.*)$/gm,'<h5>$1</h5>')
-           .replace(/^#### (.*)$/gm,'<h4>$1</h4>')
-           .replace(/^### (.*)$/gm,'<h3>$1</h3>')
-           .replace(/^## (.*)$/gm,'<h2>$1</h2>')
-           .replace(/^# (.*)$/gm,'<h1>$1</h1>')
-           .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
-           .replace(/\*(.+?)\*/g,'<em>$1</em>')
-           .replace(/`([^`]+)`/g,'<code>$1</code>')
-           .replace(/\[(.+?)\]\((.+?)\)/g,'<a href="$2" target="_blank">$1</a>');
-    md = md.split(/\n{2,}/).map(p=>{
-      if(/^<h\d|^<ul|^<ol|^<pre|^<blockquote/.test(p.trim())) return p;
-      return '<p>'+p.replace(/\n/g,'<br>')+'</p>';
-    }).join('\n');
-    md = md.replace(/__F_(\d+)__/g, (_,i)=>{
-      const safe = fences[i].replace(/[&<>]/g, s=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[s]));
-      return '<pre><code class="hljs">'+safe+'</code></pre>';
-    });
-
-    const [lang, dir] = langDir.split('|');
-    return `<!DOCTYPE html><html lang="${lang}" dir="${dir}"><head>
-<meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
-</head><body style="font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;padding:18px;line-height:1.8">
-${md}
-<script>document.querySelectorAll('pre code').forEach(el=>window.hljs&&hljs.highlightElement(el));<\/script>
-</body></html>`;
-  }
-
-  function reactToHtml(jsx, langDir){
-    const [lang, dir] = langDir.split('|');
-    const compiled = Babel.transform(jsx, { presets: ['env','react'] }).code;
-    // نحقن div#root ونشغّل الكود (يتوقع الكود أن يستخدم ReactDOM.render إذا لزم)
-    // بدون تحميل React من CDN، نسمح بكتابة JSX يحوَّل إلى JS عادي (مكونات function ترتبط يدويًا)
-    // لأبسطية: نضع الكود داخل <script> ليتم تنفيذه. على المستخدم أن يتعامل مع DOM أو يستخدم Preact المستضاف ذاتيًا إن رغب.
-    return `<!DOCTYPE html>
-<html lang="${lang}" dir="${dir}">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>React Preview (JSX)</title>
-</head>
-<body>
-<div id="root"></div>
-<script>
-${compiled}
-<\/script>
-</body>
-</html>`;
-  }
-
   function ensureViewport(html){
     if(!/<meta[^>]+name=["']viewport["']/i.test(html)){
       if(/<head[^>]*>/i.test(html)){
-        html = html.replace(/<head[^>]*>/i, m=> m + '\n<meta name="viewport" content="width=device-width, initial-scale=1">');
+        html = html.replace(/<head[^>]*>/i, m => m + '\n<meta name="viewport" content="width=device-width, initial-scale=1">');
       }else{
-        html = '<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>'+html+'</body></html>';
+        html = `<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>${html}</body></html>`;
       }
     }
     return html;
   }
 
-  function bundle(){
-    const raw = codeEl.value;
-    const md = (modeEl.value==='auto')? detectMode(raw) : modeEl.value;
-    const langDir = pageLangSel.value;
-
-    if(md==='html'){
-      let html = raw;
-      html = ensureViewport(html);
-      // خيارات إضافية
-      const links=[];
-      if($('#useNormalize').checked) links.push('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">');
-      if($('#useTailwind').checked) links.push('<script src="https://cdn.tailwindcss.com"></script>');
-      if(/<\/head>/i.test(html)){
-        html = html.replace(/<\/head>/i, links.join('\n')+'\n</head>');
-      } else {
-        html = `<!DOCTYPE html><html lang="${langDir.split('|')[0]}" dir="${langDir.split('|')[1]}"><head>${links.join('\n')}<meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>${raw}</body></html>`;
-      }
-      return html;
-    }
-
-    if(md==='fragment'){
-      let html = wrapFragment(raw, langDir);
-      const links=[];
-      if($('#useNormalize').checked) links.push('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">');
-      if($('#useTailwind').checked) links.push('<script src="https://cdn.tailwindcss.com"></script>');
-      html = html.replace(/<\/head>/i, links.join('\n')+'\n</head>');
-      return html;
-    }
-
-    if(md==='markdown'){
-      return mdToHtml(raw, langDir);
-    }
-
-    if(md==='react'){
-      return reactToHtml(raw, langDir);
-    }
-
-    // code view (no html)
-    return null; // سنعرضه كنص ملوّن
-  }
-
+  // تشغيل: srcdoc أولًا، وإن لم يدعم المتصفح نستخدم Blob URL
   function run(){
-    const raw = codeEl.value.trim();
-    if(!raw){
-      frame.style.display=''; codeView.style.display='none';
-      frame.srcdoc = wrapFragment('<main style="padding:18px;font-family:system-ui">ألصِق كودك واضغط تشغيل.</main>', pageLangSel.value);
-      setStatus('لا يوجد كود — عرض صفحة توجيهية');
-      return;
+    const raw = codeEl.value || '';
+    const html = wrapIfNeeded(raw);
+    try{
+      // طريقة srcdoc (الأفضل)
+      view.removeAttribute('src'); // نحذف أي src قديم
+      view.srcdoc = html;
+      statusEl.textContent = 'معاينة باستخدام srcdoc';
+    }catch(e){
+      // بديل Blob URL
+      const blob = new Blob([html], {type:'text/html;charset=utf-8'});
+      const url = URL.createObjectURL(blob);
+      view.src = url;
+      statusEl.textContent = 'معاينة باستخدام Blob URL';
+      // تنظيف الرابط المؤقت بعد تحميل الإطار
+      view.onload = ()=> URL.revokeObjectURL(url);
     }
-
-    const out = bundle();
-    if(out===null){
-      // عرض كود فقط مع تمييز
-      frame.style.display='none'; codeView.style.display='block';
-      hlcode.textContent = codeEl.value;
-      window.hljs && hljs.highlightElement(hlcode);
-      setStatus('عرض كود (بدون معاينة HTML)');
-    }else{
-      codeView.style.display='none'; frame.style.display='';
-      frame.srcdoc = out;
-      setStatus('معاينة مفعّلة');
-    }
-    save();
   }
 
+  // تنزيل الملف الحالي
   function download(){
-    const name = (filenameEl.value||'index.html').trim();
-    const out = bundle();
-    const data = (out===null)? codeEl.value : out;
-    const type = (out===null)? 'text/plain;charset=utf-8' : 'text/html;charset=utf-8';
-    const blob = new Blob([data], {type});
+    const blob = new Blob([wrapIfNeeded(codeEl.value)], {type:'text/html;charset=utf-8'});
     const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href=url; a.download=name; a.click(); URL.revokeObjectURL(url);
+    const a = document.createElement('a'); a.href = url; a.download = 'preview.html'; a.click();
+    URL.revokeObjectURL(url);
   }
 
+  // فتح في نافذة جديدة (يعمل دائمًا لأنّه يُنفَّذ بضغط زر)
   function openWindow(){
-    const out = bundle();
-    if(out===null){ alert('الوضع الحالي ليس HTML/Markdown/React. اختر نوع يدعم المعاينة.'); return; }
+    const html = wrapIfNeeded(codeEl.value);
     const w = window.open('', '_blank', 'noopener,width=900,height=700');
-    if(!w){ alert('المتصفح منع النافذة المنبثقة. اسمح بها مؤقتًا.'); return; }
-    w.document.open(); w.document.write(out); w.document.close();
+    if(!w){ alert('المتصفح منع النافذة. اسمح بالنوافذ المنبثقة مؤقتًا.'); return; }
+    w.document.open(); w.document.write(html); w.document.close();
   }
 
-  // Autosave
-  function save(){
-    localStorage.setItem(LS, JSON.stringify({
-      code: codeEl.value, mode: modeEl.value, filename: filenameEl.value,
-      normalize: $('#useNormalize').checked, tailwind: $('#useTailwind').checked,
-      lang: pageLangSel.value
-    }));
-    setAutosaveTip('💾 تم الحفظ');
-  }
+  // حفظ تلقائي وتشغيل تلقائي
+  const LS = 'sure_preview_v1';
   function load(){
     try{
       const s = JSON.parse(localStorage.getItem(LS));
-      if(!s) return;
-      codeEl.value = s.code ?? '';
-      modeEl.value = s.mode ?? 'auto';
-      filenameEl.value = s.filename ?? 'index.html';
-      $('#useNormalize').checked = !!s.normalize;
-      $('#useTailwind').checked = (s.tailwind!==false);
-      pageLangSel.value = s.lang ?? 'ar|rtl';
+      if(s){ codeEl.value = s.code || ''; autorun.checked = !!s.autorun; }
     }catch{}
   }
+  function save(){
+    localStorage.setItem(LS, JSON.stringify({ code: codeEl.value, autorun: autorun.checked }));
+  }
 
-  // Events
-  let debounce=null;
-  [codeEl, modeEl, pageLangSel, useNormalize, useTailwind].forEach(el=>{
-    const evt = (el===modeEl||el===pageLangSel||el.type==='checkbox')? 'change' : 'input';
-    el.addEventListener(evt, ()=>{
-      countLines();
-      if(autoRun.checked){ clearTimeout(debounce); debounce = setTimeout(run, 220); }
-      save();
-    });
+  // أحداث
+  let deb=null;
+  codeEl.addEventListener('input', ()=>{
+    save();
+    if(autorun.checked){ clearTimeout(deb); deb = setTimeout(run, 150); }
   });
-
   runBtn.addEventListener('click', run);
-  runTop.addEventListener('click', run);
-  downloadTop.addEventListener('click', download);
-  openWin.addEventListener('click', openWindow);
+  saveBtn.addEventListener('click', download);
+  openBtn.addEventListener('click', openWindow);
+  autorun.addEventListener('change', save);
 
-  window.addEventListener('keydown', (e)=>{
+  // اختصارات
+  window.addEventListener('keydown', e=>{
     if((e.ctrlKey||e.metaKey) && e.key==='Enter'){ e.preventDefault(); run(); }
     if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='s'){ e.preventDefault(); download(); }
   });
 
-  // Resizer (drag to make editor smaller/bigger)
-  let dragging=false, startX=0, startW=0;
-  resizer.addEventListener('mousedown', (e)=>{ dragging=true; startX=e.clientX; startW=leftCol.getBoundingClientRect().width; document.body.style.userSelect='none'; });
-  window.addEventListener('mousemove', (e)=>{
-    if(!dragging) return;
-    const dx = e.clientX - startX;
-    const newW = Math.max(260, Math.min(700, startW + dx));
-    leftCol.style.gridColumn = 'auto';
-    leftCol.style.width = newW + 'px';
-    document.querySelector('.wrap').style.gridTemplateColumns = `${newW}px 1fr`;
-  });
-  window.addEventListener('mouseup', ()=>{ dragging=false; document.body.style.userSelect=''; });
-
-  // Boot
+  // إقلاع
   load();
-  if(!codeEl.value.trim()){
-    codeEl.value = `<!-- مثال: React JSX -->
-const App = () => {
-  return (
-    <main style={{fontFamily:'system-ui', padding:'24px'}}>
-      <h1 style={{color:'#16a34a'}}>🌟 Pro Preview</h1>
-      <p>هذه معاينة React (JSX) باستخدام Babel Standalone.</p>
-      <button onclick="alert('Hi!')" style="padding:.6rem 1rem;border:none;border-radius:.5rem;background:#2563eb;color:#fff">زر</button>
-    </main>
-  );
-};
-App(); // يمكنك كتابة DOM أو استخدام أي كود JS
-`;
-  }
-  countLines();
   run();
 </script>
 </body>
