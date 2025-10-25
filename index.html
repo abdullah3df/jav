@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>معاينة كود — HTML / CSS / JS</title>
+<title>معاينة كود — موبايل/تابلت/ديسكتوب</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
@@ -27,8 +27,8 @@
   .btn.ghost{background:#0b1220;border:1px solid #ffffff1a;color:#cbd5e1}
   .btn.warn{background:linear-gradient(180deg,#ef4444,#dc2626);color:#fff}
 
-  .main{max-width:1400px;margin:auto;padding:14px;display:grid;gap:12px;grid-template-columns:1.2fr 1fr}
-  @media (max-width:1000px){.main{grid-template-columns:1fr}}
+  .main{max-width:1400px;margin:auto;padding:14px;display:grid;gap:12px;grid-template-columns:1.05fr 1fr}
+  @media (max-width:1100px){.main{grid-template-columns:1fr}}
 
   .panel{background:linear-gradient(180deg,#0f1626,#0d1422);border:1px solid var(--line);border-radius:14px;box-shadow:0 8px 24px #00000030;overflow:hidden;min-height:0;display:flex;flex-direction:column}
   .tabs{display:flex;gap:8px;padding:8px 10px;border-bottom:1px solid var(--line);background:#0e1a2c}
@@ -39,20 +39,38 @@
   textarea{position:absolute;inset:0;width:100%;height:100%;border:none;outline:none;resize:none;background:#0b1220;color:#e6edf3;font:14px/1.6 ui-monospace,Consolas,monospace;padding:14px}
   .status{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid var(--line);background:#0e1a2c;color:#9fb3d9;font-size:12px}
 
+  /* Preview side */
   .prev-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px;border-bottom:1px solid var(--line);background:#0e1a2c}
   .chip{padding:6px 10px;border-radius:999px;background:#0b1220;border:1px solid #ffffff1a;color:#cbd5e1;font-size:12px;display:inline-flex;gap:6px;align-items:center}
-  .chip input{accent-color:#60a5fa}
-  iframe{flex:1;border:0;background:white;height:520px}
+  .chip input, .chip select{accent-color:#60a5fa;background:#0b1220;color:#cbd5e1;border:1px solid #ffffff1a;border-radius:10px;padding:6px 10px}
+  .tool-spacer{flex:1}
+
+  /* Device frame */
+  .device-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:14px}
+  .stage{position:relative;display:inline-block;transform-origin:top center}
+  .device{
+    position:relative;background:#0a0a0a;border-radius:34px;padding:16px;border:1px solid #222;
+    box-shadow:0 20px 60px rgba(0,0,0,.6), inset 0 0 0 2px #1a1a1a;
+  }
+  .device::before{ /* notch */
+    content:""; position:absolute; top:8px; left:50%; transform:translateX(-50%);
+    width:120px; height:18px; background:#0a0a0a; border-radius:0 0 12px 12px; border:1px solid #1d1d1d; border-top:none;
+  }
+  .screen{
+    background:#fff;border-radius:24px; overflow:hidden; box-shadow:inset 0 0 0 1px #333;
+  }
+  iframe{border:0; display:block; width:100%; height:100%}
+
+  .hint{color:var(--muted); font-size:12px; padding:0 10px 10px}
 </style>
 </head>
 <body>
   <header>
     <div class="head">
       <div class="logo"></div>
-      <div class="brand">معاينة كود — HTML / CSS / JS</div>
+      <div class="brand">معاينة كود — موبايل/تابلت/ديسكتوب</div>
       <div class="spacer"></div>
       <span id="autosave" class="pill">💾 حفظ تلقائي مفعّل</span>
-      <button id="openPreview" class="btn ghost" title="فتح المعاينة في نافذة جديدة">فتح المعاينة</button>
       <button id="run" class="btn play" title="تشغيل (Ctrl+Enter)">تشغيل</button>
       <button id="download" class="btn save" title="تنزيل HTML واحد">تنزيل</button>
       <button id="reset" class="btn warn" title="إرجاع القالب">إعادة ضبط</button>
@@ -77,49 +95,85 @@
       <div class="editor" id="jsPanel"><textarea id="jsCode"></textarea></div>
 
       <div class="status">
-        <div>⌨️ اختصارات: <b>Ctrl + Enter</b> تشغيل — <b>Ctrl + S</b> تنزيل — <b>Ctrl + 1/2/3</b> للتنقّل</div>
+        <div>⌨️ اختصارات: <b>Ctrl+Enter</b> تشغيل — <b>Ctrl+S</b> تنزيل — <b>Ctrl+1/2/3</b> تنقّل</div>
         <div id="lines">0 سطر</div>
       </div>
     </section>
 
-    <!-- المعاينة -->
+    <!-- المعاينة مع إطار جهاز -->
     <section class="panel">
       <div class="prev-toolbar">
-        <span class="pill">المعاينة الفورية — ثابتة</span>
+        <label class="chip">الجهاز:
+          <select id="devicePreset">
+            <option value="390x844">iPhone 14 — 390×844</option>
+            <option value="412x915">Pixel 7 — 412×915</option>
+            <option value="430x932">iPhone 14 Pro Max — 430×932</option>
+            <option value="768x1024">iPad — 768×1024</option>
+            <option value="1024x1366">iPad Pro — 1024×1366</option>
+            <option value="1280x800">Desktop Small — 1280×800</option>
+            <option value="1440x900">Desktop — 1440×900</option>
+          </select>
+        </label>
+        <label class="chip"><input type="checkbox" id="rotate"> تدوير (أفقي)</label>
+        <label class="chip">الزوم:
+          <select id="zoom">
+            <option>100%</option><option>90%</option><option>80%</option><option>75%</option>
+            <option selected>70%</option><option>60%</option><option>50%</option><option>40%</option>
+          </select>
+        </label>
+        <div class="tool-spacer"></div>
+        <button id="openWindow" class="btn ghost">فتح في نافذة مستقلة</button>
       </div>
-      <iframe id="preview" title="معاينة الكود"></iframe>
+
+      <div class="device-wrap">
+        <div id="stage" class="stage">
+          <div id="device" class="device">
+            <div id="screen" class="screen" style="width:390px;height:844px">
+              <iframe id="preview" title="معاينة"></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="hint">نصيحة: عند المعاينة للموبايل، تأكد أن وثيقتك تحتوي على وسم <code>&lt;meta name="viewport" ...&gt;</code>. سنضيفه تلقائيًا إذا لم يوجد.</div>
     </section>
   </div>
 
 <script>
   // عناصر
   const $ = s => document.querySelector(s);
-  const runBtn = $('#run'), downloadBtn = $('#download'), resetBtn = $('#reset'), openPreviewBtn = $('#openPreview');
+  const runBtn = $('#run'), downloadBtn = $('#download'), resetBtn = $('#reset'), openWindowBtn = $('#openWindow');
   const htmlA = $('#htmlCode'), cssA = $('#cssCode'), jsA = $('#jsCode'), linesEl = $('#lines'), autosaveTag = $('#autosave');
   const autoRun = $('#autoRun'), useTailwind = $('#useTailwind'), useNormalize = $('#useNormalize');
-  const preview = $('#preview');
+  const preview = $('#preview'); const screen = $('#screen'); const stage = $('#stage');
+  const devicePreset = $('#devicePreset'); const rotate = $('#rotate'); const zoomSel = $('#zoom');
 
   // حالة
-  const LS = 'fast_preview_v1';
+  const LS = 'mobile_preview_v2';
   const defaults = {
     html: `<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>تجربتي</title>
+  <title>تجربتي (موبايل)</title>
+  <style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;padding:16px}</style>
 </head>
 <body>
-  <main style="padding:24px;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial">
-    <h1>👋 أهلاً بك</h1>
-    <p>اكتب HTML/CSS/JS في المحرر وانقر تشغيل — أو فعّل التشغيل التلقائي.</p>
-    <button onclick="alert('مرحباً!')">زر تجريبي</button>
+  <header style="position:sticky;top:0;background:#fff;padding:12px;border-bottom:1px solid #eee;z-index:10">
+    <strong>ترويسة</strong>
+  </header>
+
+  <main class="p-4">
+    <h1 style="color:#1d4ed8">👋 أهلاً بك</h1>
+    <p>هذه معاينة مخصّصة للموبايل. جرّب تكبير/تصغير وتدوير الجهاز من الشريط العلوي.</p>
+    <button onclick="alert('Hi!')" style="background:#1d4ed8;color:#fff;border:none;padding:.6rem 1rem;border-radius:.5rem">زر</button>
   </main>
 </body>
 </html>`,
-    css: `h1{color:#60a5fa} button{background:#3b82f6;color:#fff;border:none;padding:.6rem 1rem;border-radius:.5rem;cursor:pointer}
+    css: `/* CSS إضافي */
+h1{margin-top:16px}
 button:hover{filter:brightness(1.05)}`,
-    js: `console.log('Ready!');`
+    js: `console.log('Mobile preview ready!');`
   };
 
   function load(){ try{ return JSON.parse(localStorage.getItem(LS)) ?? {...defaults} }catch{ return {...defaults} } }
@@ -144,7 +198,37 @@ button:hover{filter:brightness(1.05)}`,
     });
   });
 
-  // بناء صفحة المعاينة
+  // أبعاد الجهاز + زوم + تدوير
+  function parsePreset(v){
+    const [w,h] = v.split('x').map(n=>parseInt(n,10));
+    return {w,h};
+  }
+  function applyDeviceSize(){
+    let {w,h} = parsePreset(devicePreset.value);
+    if(rotate.checked){ [w,h] = [h,w]; }
+    screen.style.width = w + 'px';
+    screen.style.height = h + 'px';
+    // زوم كامل المسرح (CSS Transform) ليظهر الجهاز بحجم مناسب
+    const z = parseInt(zoomSel.value,10) / 100;
+    stage.style.transform = `scale(${z})`;
+  }
+  devicePreset.addEventListener('change', applyDeviceSize);
+  rotate.addEventListener('change', applyDeviceSize);
+  zoomSel.addEventListener('change', applyDeviceSize);
+
+  // بناء صفحة المعاينة (مع إصلاح viewport تلقائي)
+  function ensureViewportHead(html){
+    // إن لم يجد meta viewport، نضيف واحدًا
+    if(!/<meta[^>]+name=["']viewport["']/i.test(html)){
+      html = html.replace(/<head[^>]*>/i, m => `${m}\n<meta name="viewport" content="width=device-width, initial-scale=1">`);
+      if(!/<head/i.test(html)){
+        // لا يوجد <head> أصلاً
+        html = `<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>${html}</body></html>`;
+      }
+    }
+    return html;
+  }
+
   function bundle(){
     const links=[];
     if(useNormalize.checked){
@@ -162,7 +246,9 @@ ${cssA.value}
 ${jsA.value}
 <\/script>`;
 
-    const base = htmlA.value.trim();
+    let base = htmlA.value.trim();
+    base = ensureViewportHead(base);
+
     if (/<\/head>/i.test(base)) {
       return base.replace(/<\/head>/i, links.join('\n')+'\n</head>').replace('</body>', inj+'\n</body>');
     }
@@ -177,7 +263,7 @@ ${jsA.value}
   let debounce=null, saveTO=null;
   [htmlA,cssA,jsA,useTailwind,useNormalize].forEach(el=>{
     const evt = el.type === 'checkbox' ? 'change' : 'input';
-    el.addEventListener(evt, ()=>{ save(); countLines(); if(autoRun.checked){ clearTimeout(debounce); debounce=setTimeout(run, 250); } });
+    el.addEventListener(evt, ()=>{ save(); countLines(); if(autoRun.checked){ clearTimeout(debounce); debounce=setTimeout(run, 200); } });
   });
 
   runBtn.addEventListener('click', run);
@@ -189,10 +275,13 @@ ${jsA.value}
   }
   downloadBtn.addEventListener('click', ()=> download('project.html', bundle()));
 
-  // فتح المعاينة في نافذة جديدة
-  openPreviewBtn.addEventListener('click', ()=>{
-    const w = window.open('', '_blank');
-    w.document.open(); w.document.write(bundle()); w.document.close();
+  // فتح في نافذة مستقلة (مع srcdoc لضمان العمل)
+  openWindowBtn.addEventListener('click', ()=>{
+    const html = bundle();
+    const w = window.open('', '_blank', 'noopener,width=420,height=900');
+    if(!w){ alert('المتصفح منع النافذة المنبثقة. اسمح بها مؤقتًا.'); return; }
+    // نستخدم doc.write هنا بgesture المستخدم (زر) فمسموح ومضمون
+    w.document.open(); w.document.write(html); w.document.close();
   });
 
   // اختصارات
@@ -206,6 +295,9 @@ ${jsA.value}
       document.querySelector(`.tab[data-tab="${tab}"]`).click();
     }
   });
+
+  // تفعيل أبعاد الجهاز أولًا
+  applyDeviceSize();
 </script>
 </body>
 </html>
