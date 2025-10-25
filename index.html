@@ -3,301 +3,309 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>معاينة كود — موبايل/تابلت/ديسكتوب</title>
+<title>مربع كود + معاينة فورية</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+<!-- تمييز الأكواد لأي لغة -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
 <style>
   :root{
-    --bg:#0b0f17;--panel:#0f1626;--line:#22314d;--text:#e6edf3;--muted:#9aa6b2;
-    --accent:#60a5fa;--green:#22c55e;--red:#ef4444;--chip:#1a263e;--surface:#0e1a2c
+    --bg:#0b0f17;--panel:#0f1626;--line:#22314d;--text:#e6edf3;--muted:#9aa6b2;--accent:#60a5fa
   }
   *{box-sizing:border-box}
   html,body{height:100%}
-  body{margin:0;background:var(--bg);color:var(--text);font-family:"Cairo",system-ui,-apple-system,"Segoe UI",Roboto,Arial}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:"Cairo",system-ui,-apple-system,"Segoe UI",Roboto,Arial;display:flex;flex-direction:column}
   header{position:sticky;top:0;z-index:10;background:linear-gradient(180deg,#0e1526,#0e1526dd);border-bottom:1px solid var(--line);backdrop-filter:saturate(1.1) blur(10px)}
-  .head{max-width:1400px;margin:auto;display:flex;gap:12px;align-items:center;padding:10px 14px}
-  .logo{width:34px;height:34px;border-radius:10px;background:conic-gradient(from 120deg,#3b82f6,#22c55e,#fde047,#f43f5e,#3b82f6)}
+  .head{max-width:1200px;margin:auto;display:flex;gap:10px;align-items:center;padding:10px 14px}
   .brand{font-weight:800}
   .spacer{flex:1}
-  .pill{display:inline-flex;align-items:center;gap:8px;background:#0b1220;border:1px solid #ffffff1a;color:#cbd5e1;padding:8px 12px;border-radius:999px;font-size:13px}
+  .pill{display:inline-flex;align-items:center;gap:8px;background:#0b1220;border:1px solid #ffffff1a;color:#cbd5e1;padding:8px 12px;border-radius:999px;font-size:12px}
 
-  .btn{border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
-  .btn:hover{filter:brightness(1.05)}
-  .btn.play{background:linear-gradient(180deg,#22c55e,#16a34a);color:#fff}
+  .main{max-width:1200px;margin:auto;padding:14px;display:grid;gap:12px;grid-template-columns:1fr 1fr}
+  @media (max-width:960px){.main{grid-template-columns:1fr}}
+  .card{background:linear-gradient(180deg,#0f1626,#0d1422);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;min-height:0}
+  .card-head{display:flex;gap:8px;align-items:center;padding:10px;border-bottom:1px solid var(--line)}
+  .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  select,input[type="text"]{background:#0b1220;border:1px solid #ffffff1a;color:#e6edf3;border-radius:10px;padding:8px 10px;outline:none}
+  .btn{border:none;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
+  .btn.run{background:linear-gradient(180deg,#22c55e,#16a34a);color:#fff}
   .btn.save{background:linear-gradient(180deg,#60a5fa,#3b82f6);color:#fff}
   .btn.ghost{background:#0b1220;border:1px solid #ffffff1a;color:#cbd5e1}
-  .btn.warn{background:linear-gradient(180deg,#ef4444,#dc2626);color:#fff}
 
-  .main{max-width:1400px;margin:auto;padding:14px;display:grid;gap:12px;grid-template-columns:1.05fr 1fr}
-  @media (max-width:1100px){.main{grid-template-columns:1fr}}
-
-  .panel{background:linear-gradient(180deg,#0f1626,#0d1422);border:1px solid var(--line);border-radius:14px;box-shadow:0 8px 24px #00000030;overflow:hidden;min-height:0;display:flex;flex-direction:column}
-  .tabs{display:flex;gap:8px;padding:8px 10px;border-bottom:1px solid var(--line);background:#0e1a2c}
-  .tab{padding:8px 12px;border-radius:10px;border:1px solid var(--line);background:#0b1220;color:#cbd5e1;font-weight:700;cursor:pointer}
-  .tab.active{background:#132036;border-color:#3a4a6b;color:#fff}
-  .editor{position:relative;height:360px;display:none}
-  .editor.active{display:block}
-  textarea{position:absolute;inset:0;width:100%;height:100%;border:none;outline:none;resize:none;background:#0b1220;color:#e6edf3;font:14px/1.6 ui-monospace,Consolas,monospace;padding:14px}
-  .status{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 12px;border-top:1px solid var(--line);background:#0e1a2c;color:#9fb3d9;font-size:12px}
-
-  /* Preview side */
-  .prev-toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:10px;border-bottom:1px solid var(--line);background:#0e1a2c}
-  .chip{padding:6px 10px;border-radius:999px;background:#0b1220;border:1px solid #ffffff1a;color:#cbd5e1;font-size:12px;display:inline-flex;gap:6px;align-items:center}
-  .chip input, .chip select{accent-color:#60a5fa;background:#0b1220;color:#cbd5e1;border:1px solid #ffffff1a;border-radius:10px;padding:6px 10px}
-  .tool-spacer{flex:1}
-
-  /* Device frame */
-  .device-wrap{flex:1;display:flex;align-items:center;justify-content:center;padding:14px}
-  .stage{position:relative;display:inline-block;transform-origin:top center}
-  .device{
-    position:relative;background:#0a0a0a;border-radius:34px;padding:16px;border:1px solid #222;
-    box-shadow:0 20px 60px rgba(0,0,0,.6), inset 0 0 0 2px #1a1a1a;
+  textarea{
+    width:100%;height:60vh;min-height:320px;background:#0b1220;color:#e6edf3;border:none;outline:none;
+    font:14px/1.6 ui-monospace,Consolas,monospace;padding:14px;resize:vertical
   }
-  .device::before{ /* notch */
-    content:""; position:absolute; top:8px; left:50%; transform:translateX(-50%);
-    width:120px; height:18px; background:#0a0a0a; border-radius:0 0 12px 12px; border:1px solid #1d1d1d; border-top:none;
-  }
-  .screen{
-    background:#fff;border-radius:24px; overflow:hidden; box-shadow:inset 0 0 0 1px #333;
-  }
-  iframe{border:0; display:block; width:100%; height:100%}
 
-  .hint{color:var(--muted); font-size:12px; padding:0 10px 10px}
+  /* المعاينة */
+  .preview{display:flex;flex-direction:column;min-height:0}
+  .toolbar{display:flex;gap:8px;align-items:center;padding:10px;border-bottom:1px solid var(--line);background:#0e1a2c}
+  iframe{flex:1;border:0;background:white;height:60vh;min-height:320px}
+  .codebox{flex:1;overflow:auto;background:#0b1220;border-top:1px solid var(--line)}
+  pre{margin:0;padding:14px}
 </style>
 </head>
 <body>
   <header>
     <div class="head">
-      <div class="logo"></div>
-      <div class="brand">معاينة كود — موبايل/تابلت/ديسكتوب</div>
+      <div class="brand">مربع كود + معاينة فورية</div>
       <div class="spacer"></div>
-      <span id="autosave" class="pill">💾 حفظ تلقائي مفعّل</span>
-      <button id="run" class="btn play" title="تشغيل (Ctrl+Enter)">تشغيل</button>
-      <button id="download" class="btn save" title="تنزيل HTML واحد">تنزيل</button>
-      <button id="reset" class="btn warn" title="إرجاع القالب">إعادة ضبط</button>
+      <span class="pill">Ctrl+Enter تشغيل — Ctrl+S تنزيل</span>
     </div>
   </header>
 
   <div class="main">
-    <!-- المحرر -->
-    <section class="panel">
-      <div class="tabs">
-        <button class="tab active" data-tab="html">HTML</button>
-        <button class="tab" data-tab="css">CSS</button>
-        <button class="tab" data-tab="js">JS</button>
+    <!-- الإدخال -->
+    <section class="card">
+      <div class="card-head row">
+        <label class="pill">النمط:
+          <select id="mode">
+            <option value="auto" selected>تلقائي (موصى به)</option>
+            <option value="html">HTML (وثيقة كاملة)</option>
+            <option value="fragment">HTML (جزء/مكوّن)</option>
+            <option value="markdown">Markdown</option>
+            <option value="code">كود (أي لغة)</option>
+          </select>
+        </label>
+        <label class="pill"><input type="checkbox" id="autoRun" checked> تشغيل تلقائي</label>
         <div class="spacer"></div>
-        <label class="chip"><input type="checkbox" id="autoRun" checked> تشغيل تلقائي</label>
-        <label class="chip"><input type="checkbox" id="useTailwind" checked> إضافة Tailwind</label>
-        <label class="chip"><input type="checkbox" id="useNormalize"> Normalize CSS</label>
+        <input id="filename" type="text" value="my-code.html" title="اسم الملف عند التنزيل" />
+        <button id="downloadBtn" class="btn save">تنزيل</button>
+        <button id="runBtn" class="btn run">تشغيل</button>
       </div>
-
-      <div class="editor active" id="htmlPanel"><textarea id="htmlCode"></textarea></div>
-      <div class="editor" id="cssPanel"><textarea id="cssCode"></textarea></div>
-      <div class="editor" id="jsPanel"><textarea id="jsCode"></textarea></div>
-
-      <div class="status">
-        <div>⌨️ اختصارات: <b>Ctrl+Enter</b> تشغيل — <b>Ctrl+S</b> تنزيل — <b>Ctrl+1/2/3</b> تنقّل</div>
-        <div id="lines">0 سطر</div>
-      </div>
+      <textarea id="code" placeholder="ألصِق الكود هنا. HTML/Markdown/أي لغة في نفس المربع."></textarea>
     </section>
 
-    <!-- المعاينة مع إطار جهاز -->
-    <section class="panel">
-      <div class="prev-toolbar">
-        <label class="chip">الجهاز:
-          <select id="devicePreset">
-            <option value="390x844">iPhone 14 — 390×844</option>
-            <option value="412x915">Pixel 7 — 412×915</option>
-            <option value="430x932">iPhone 14 Pro Max — 430×932</option>
-            <option value="768x1024">iPad — 768×1024</option>
-            <option value="1024x1366">iPad Pro — 1024×1366</option>
-            <option value="1280x800">Desktop Small — 1280×800</option>
-            <option value="1440x900">Desktop — 1440×900</option>
-          </select>
-        </label>
-        <label class="chip"><input type="checkbox" id="rotate"> تدوير (أفقي)</label>
-        <label class="chip">الزوم:
-          <select id="zoom">
-            <option>100%</option><option>90%</option><option>80%</option><option>75%</option>
-            <option selected>70%</option><option>60%</option><option>50%</option><option>40%</option>
-          </select>
-        </label>
-        <div class="tool-spacer"></div>
-        <button id="openWindow" class="btn ghost">فتح في نافذة مستقلة</button>
+    <!-- المخرجات -->
+    <section class="card preview">
+      <div class="toolbar row">
+        <span class="pill" id="status">جاهز</span>
+        <div class="spacer"></div>
+        <button id="openWin" class="btn ghost">فتح المعاينة في نافذة</button>
       </div>
-
-      <div class="device-wrap">
-        <div id="stage" class="stage">
-          <div id="device" class="device">
-            <div id="screen" class="screen" style="width:390px;height:844px">
-              <iframe id="preview" title="معاينة"></iframe>
-            </div>
-          </div>
-        </div>
+      <!-- لو HTML/Markdown نستخدم iframe؛ لو كود عادي نعرضه ملوّن -->
+      <iframe id="frame" title="المعاينة"></iframe>
+      <div id="codeView" class="codebox" style="display:none">
+        <pre><code id="hlcode" class="hljs"></code></pre>
       </div>
-      <div class="hint">نصيحة: عند المعاينة للموبايل، تأكد أن وثيقتك تحتوي على وسم <code>&lt;meta name="viewport" ...&gt;</code>. سنضيفه تلقائيًا إذا لم يوجد.</div>
     </section>
   </div>
 
 <script>
-  // عناصر
   const $ = s => document.querySelector(s);
-  const runBtn = $('#run'), downloadBtn = $('#download'), resetBtn = $('#reset'), openWindowBtn = $('#openWindow');
-  const htmlA = $('#htmlCode'), cssA = $('#cssCode'), jsA = $('#jsCode'), linesEl = $('#lines'), autosaveTag = $('#autosave');
-  const autoRun = $('#autoRun'), useTailwind = $('#useTailwind'), useNormalize = $('#useNormalize');
-  const preview = $('#preview'); const screen = $('#screen'); const stage = $('#stage');
-  const devicePreset = $('#devicePreset'); const rotate = $('#rotate'); const zoomSel = $('#zoom');
+  const codeEl = $('#code');
+  const modeEl = $('#mode');
+  const frame = $('#frame');
+  const codeView = $('#codeView');
+  const hlcode = $('#hlcode');
+  const statusEl = $('#status');
+  const runBtn = $('#runBtn');
+  const downloadBtn = $('#downloadBtn');
+  const filenameEl = $('#filename');
+  const autoRun = $('#autoRun');
+  const openWin = $('#openWin');
 
-  // حالة
-  const LS = 'mobile_preview_v2';
-  const defaults = {
-    html: `<!DOCTYPE html>
+  const LS = 'one_box_preview_v1';
+
+  // قالب لجزء HTML (نلفّه بوثيقة جاهزة)
+  function wrapFragment(html){
+    return `<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>تجربتي (موبايل)</title>
-  <style>body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;padding:16px}</style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Preview</title>
 </head>
 <body>
-  <header style="position:sticky;top:0;background:#fff;padding:12px;border-bottom:1px solid #eee;z-index:10">
-    <strong>ترويسة</strong>
-  </header>
-
-  <main class="p-4">
-    <h1 style="color:#1d4ed8">👋 أهلاً بك</h1>
-    <p>هذه معاينة مخصّصة للموبايل. جرّب تكبير/تصغير وتدوير الجهاز من الشريط العلوي.</p>
-    <button onclick="alert('Hi!')" style="background:#1d4ed8;color:#fff;border:none;padding:.6rem 1rem;border-radius:.5rem">زر</button>
-  </main>
+${html}
 </body>
-</html>`,
-    css: `/* CSS إضافي */
-h1{margin-top:16px}
-button:hover{filter:brightness(1.05)}`,
-    js: `console.log('Mobile preview ready!');`
-  };
+</html>`;
+  }
 
-  function load(){ try{ return JSON.parse(localStorage.getItem(LS)) ?? {...defaults} }catch{ return {...defaults} } }
+  // تحويل Markdown بسيط (عناوين وروابط وفقرة وكود محاط ``` )
+  function mdToHtml(md){
+    // حماية الكود الثلاثي
+    const fences = [];
+    md = md.replace(/```([\\s\\S]*?)```/g, (_, block)=>{
+      fences.push(block); return `__FENCE_${fences.length-1}__`;
+    });
+    // عناوين
+    md = md.replace(/^###### (.*)$/gm,'<h6>$1</h6>')
+           .replace(/^##### (.*)$/gm,'<h5>$1</h5>')
+           .replace(/^#### (.*)$/gm,'<h4>$1</h4>')
+           .replace(/^### (.*)$/gm,'<h3>$1</h3>')
+           .replace(/^## (.*)$/gm,'<h2>$1</h2>')
+           .replace(/^# (.*)$/gm,'<h1>$1</h1>');
+    // غامق ومائل وروابط
+    md = md.replace(/\\*\\*(.+?)\\*\\*/g,'<strong>$1</strong>')
+           .replace(/\\*(.+?)\\*/g,'<em>$1</em>')
+           .replace(/`([^`]+)`/g,'<code>$1</code>')
+           .replace(/\\[(.+?)\\]\\((.+?)\\)/g,'<a href="$2" target="_blank">$1</a>');
+    // فقرات
+    md = md.split(/\\n{2,}/).map(p=>{
+      if(/^<h\\d|^<ul|^<ol|^<pre|^<blockquote/.test(p.trim())) return p;
+      return '<p>'+p.replace(/\\n/g,'<br>')+'</p>';
+    }).join('\\n');
+
+    // إعادة الكود
+    md = md.replace(/__FENCE_(\\d+)__/g, (_,i)=>{
+      const safe = fences[i].replace(/[&<>]/g,s=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[s]));
+      return '<pre><code class="hljs">'+safe+'</code></pre>';
+    });
+
+    return `<!DOCTYPE html><html lang="ar" dir="rtl"><head>
+<meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css">
+</head><body style="font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;padding:18px;line-height:1.8">
+${md}
+<script>document.querySelectorAll('pre code').forEach((el)=>window.hljs && hljs.highlightElement(el));<\/script>
+</body></html>`;
+  }
+
+  // تحديد النوع تلقائيًا
+  function detectMode(text){
+    const t = text.trim();
+    if (/<!DOCTYPE|<html|<head|<body/i.test(t)) return 'html';
+    if (/<[a-z][\s\S]*>/i.test(t)) return 'fragment';
+    if (/^#{1,6} |```|\\*\\*.+\\*\\*|\\[(.+?)\\]\\((.+?)\\)/m.test(t)) return 'markdown';
+    return 'code';
+  }
+
+  function setStatus(msg){ statusEl.textContent = msg; }
+
+  function run(){
+    const raw = codeEl.value;
+    if (!raw.trim()){
+      // نظهر صفحة فارغة لطيفة بدل لا شيء
+      frame.style.display = ''; codeView.style.display='none';
+      frame.srcdoc = wrapFragment('<main style="padding:18px;font-family:system-ui">ألصِق كودك على اليسار ثم اضغط تشغيل.</main>');
+      setStatus('لا يوجد كود — عرض صفحة توجيهية'); 
+      return;
+    }
+
+    const mode = (modeEl.value === 'auto') ? detectMode(raw) : modeEl.value;
+
+    if (mode === 'html'){
+      frame.style.display = ''; codeView.style.display='none';
+      frame.srcdoc = raw;
+      setStatus('معاينة HTML (وثيقة كاملة)');
+    } else if (mode === 'fragment'){
+      frame.style.display = ''; codeView.style.display='none';
+      frame.srcdoc = wrapFragment(raw);
+      setStatus('معاينة HTML (جزء/مكوّن)');
+    } else if (mode === 'markdown'){
+      frame.style.display = ''; codeView.style.display='none';
+      frame.srcdoc = mdToHtml(raw);
+      setStatus('معاينة Markdown');
+    } else { // code (أي لغة)
+      frame.style.display = 'none'; codeView.style.display='';
+      hlcode.textContent = raw;
+      window.hljs && hljs.highlightElement(hlcode);
+      setStatus('عرض الكود (جميع اللغات) مع تمييز ألوان');
+    }
+    save();
+  }
+
+  // تنزيل الملف بزر واحد
+  function download(){
+    const name = (filenameEl.value || 'my-code.html').trim();
+    const blob = new Blob([codeEl.value], {type:'text/plain;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a'); a.href=url; a.download=name; a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  // حفظ تلقائي
   function save(){
-    localStorage.setItem(LS, JSON.stringify({ html: htmlA.value, css: cssA.value, js: jsA.value }));
-    autosaveTag.textContent = '💾 تم الحفظ';
-    clearTimeout(saveTO); saveTO = setTimeout(()=> autosaveTag.textContent='💾 حفظ تلقائي مفعّل', 800);
+    localStorage.setItem(LS, JSON.stringify({
+      code: codeEl.value,
+      mode: modeEl.value,
+      filename: filenameEl.value
+    }));
   }
-  function countLines(){
-    const total = htmlA.value.split('\n').length + cssA.value.split('\n').length + jsA.value.split('\n').length;
-    linesEl.textContent = total + ' سطر';
+  function load(){
+    try{
+      const o = JSON.parse(localStorage.getItem(LS));
+      if(!o) return;
+      codeEl.value = o.code || '';
+      modeEl.value = o.mode || 'auto';
+      filenameEl.value = o.filename || 'my-code.html';
+    }catch{}
   }
 
-  const st = load(); htmlA.value=st.html; cssA.value=st.css; jsA.value=st.js; countLines();
-
-  // تبويبات
-  document.querySelectorAll('.tab').forEach(t=>{
-    t.addEventListener('click', ()=>{
-      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); t.classList.add('active');
-      document.querySelectorAll('.editor').forEach(e=>e.classList.remove('active'));
-      document.getElementById(t.dataset.tab+'Panel').classList.add('active');
+  // أحداث
+  let debounce=null;
+  [codeEl, modeEl].forEach(el=>{
+    const evt = (el===modeEl)? 'change' : 'input';
+    el.addEventListener(evt, ()=>{
+      clearTimeout(debounce);
+      if (autoRun.checked){
+        debounce = setTimeout(run, 200);
+      }
     });
   });
 
-  // أبعاد الجهاز + زوم + تدوير
-  function parsePreset(v){
-    const [w,h] = v.split('x').map(n=>parseInt(n,10));
-    return {w,h};
-  }
-  function applyDeviceSize(){
-    let {w,h} = parsePreset(devicePreset.value);
-    if(rotate.checked){ [w,h] = [h,w]; }
-    screen.style.width = w + 'px';
-    screen.style.height = h + 'px';
-    // زوم كامل المسرح (CSS Transform) ليظهر الجهاز بحجم مناسب
-    const z = parseInt(zoomSel.value,10) / 100;
-    stage.style.transform = `scale(${z})`;
-  }
-  devicePreset.addEventListener('change', applyDeviceSize);
-  rotate.addEventListener('change', applyDeviceSize);
-  zoomSel.addEventListener('change', applyDeviceSize);
-
-  // بناء صفحة المعاينة (مع إصلاح viewport تلقائي)
-  function ensureViewportHead(html){
-    // إن لم يجد meta viewport، نضيف واحدًا
-    if(!/<meta[^>]+name=["']viewport["']/i.test(html)){
-      html = html.replace(/<head[^>]*>/i, m => `${m}\n<meta name="viewport" content="width=device-width, initial-scale=1">`);
-      if(!/<head/i.test(html)){
-        // لا يوجد <head> أصلاً
-        html = `<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>${html}</body></html>`;
-      }
-    }
-    return html;
-  }
-
-  function bundle(){
-    const links=[];
-    if(useNormalize.checked){
-      links.push('<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">');
-    }
-    if(useTailwind.checked){
-      links.push('<script src="https://cdn.tailwindcss.com"></script>');
-    }
-
-    const inj = `
-<style>
-${cssA.value}
-</style>
-<script>
-${jsA.value}
-<\/script>`;
-
-    let base = htmlA.value.trim();
-    base = ensureViewportHead(base);
-
-    if (/<\/head>/i.test(base)) {
-      return base.replace(/<\/head>/i, links.join('\n')+'\n</head>').replace('</body>', inj+'\n</body>');
-    }
-    // إن لم يضع المستخدم هيكل HTML كامل، نغلفه
-    return `<!DOCTYPE html><html lang="ar" dir="rtl"><head>${links.join('\n')}<meta charset="UTF-8" /><meta name="viewport" content="width=device-width,initial-scale=1"></head><body>${base}${inj}</body></html>`;
-  }
-
-  // تشغيل (srcdoc موثوق)
-  function run(){ preview.srcdoc = bundle(); }
-  run(); // أول مرة
-
-  let debounce=null, saveTO=null;
-  [htmlA,cssA,jsA,useTailwind,useNormalize].forEach(el=>{
-    const evt = el.type === 'checkbox' ? 'change' : 'input';
-    el.addEventListener(evt, ()=>{ save(); countLines(); if(autoRun.checked){ clearTimeout(debounce); debounce=setTimeout(run, 200); } });
-  });
-
   runBtn.addEventListener('click', run);
-
-  // تنزيل ملف HTML واحد
-  function download(name, text){
-    const blob = new Blob([text], {type:'text/html;charset=utf-8'});
-    const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download=name; a.click(); URL.revokeObjectURL(url);
-  }
-  downloadBtn.addEventListener('click', ()=> download('project.html', bundle()));
-
-  // فتح في نافذة مستقلة (مع srcdoc لضمان العمل)
-  openWindowBtn.addEventListener('click', ()=>{
-    const html = bundle();
-    const w = window.open('', '_blank', 'noopener,width=420,height=900');
+  downloadBtn.addEventListener('click', download);
+  openWin.addEventListener('click', ()=>{
+    // فتح المعاينة الحالية في نافذة (إن كانت HTML/Markdown)
+    const text = codeEl.value;
+    const m = (modeEl.value==='auto')? detectMode(text) : modeEl.value;
+    if (m==='code'){
+      alert('المعاينة الحالية ليست HTML/Markdown. استخدم وضع HTML/Fragment/Markdown لفتح نافذة.');
+      return;
+    }
+    const html = (m==='html')? text : (m==='markdown'? mdToHtml(text) : wrapFragment(text));
+    const w = window.open('', '_blank', 'noopener,width=420,height=800');
     if(!w){ alert('المتصفح منع النافذة المنبثقة. اسمح بها مؤقتًا.'); return; }
-    // نستخدم doc.write هنا بgesture المستخدم (زر) فمسموح ومضمون
     w.document.open(); w.document.write(html); w.document.close();
   });
 
   // اختصارات
-  window.addEventListener('keydown', (e)=>{
+  window.addEventListener('keydown',(e)=>{
     if((e.ctrlKey||e.metaKey) && e.key==='Enter'){ e.preventDefault(); run(); }
-    if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='s'){ e.preventDefault(); download('project.html', bundle()); }
-    if((e.ctrlKey||e.metaKey) && ['1','2','3'].includes(e.key)){
-      e.preventDefault();
-      const map={1:'html',2:'css',3:'js'};
-      const tab=map[e.key];
-      document.querySelector(`.tab[data-tab="${tab}"]`).click();
-    }
+    if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='s'){ e.preventDefault(); download(); }
   });
 
-  // تفعيل أبعاد الجهاز أولًا
-  applyDeviceSize();
+  // إقلاع
+  load();
+  // إن لم يكن هناك أي شيء، ضع أمثلة صغيرة مفيدة
+  if(!codeEl.value.trim()){
+    codeEl.value =
+`<!-- مثال HTML (وثيقة كاملة): ألصق واضغط تشغيل -->
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>تجربة</title>
+  <style>
+    body{font-family:system-ui;padding:20px}
+    .btn{background:#2563eb;color:#fff;border:none;padding:.6rem 1rem;border-radius:.5rem;cursor:pointer}
+  </style>
+</head>
+<body>
+  <h1>مرحبا 👋</h1>
+  <p>هذه وثيقة HTML كاملة.</p>
+  <button class="btn" onclick="alert('Hi!')">جرّبني</button>
+  <script>console.log('جاهز!')</script>
+</body>
+</html>
+
+<!-- جرّب أيضًا: Markdown
+# عنوان H1
+- عنصر
+- عنصر
+**غامق** و *مائل* و \`كود\`
+-->
+
+<!-- أو أي لغة أخرى (سيُعرض بألوان):
+print("Hello, world!")
+function add(a,b){return a+b}
+-->`;
+  }
+  run(); // أول عرض
 </script>
 </body>
 </html>
