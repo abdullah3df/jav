@@ -1,31 +1,41 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CIK COIN ($CIK) - العملة الذهبية</title>
-    <meta name="description" content="الموقع الرسمي لعملة CIK COIN. انضم إلى جيش الكتاكيت الذهبية.">
+    <title>CIK COIN | The Golden Era</title>
+    <meta name="description" content="The official luxury home of $CIK Coin. Join the elite community.">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <script>
         tailwind.config = {
             theme: {
                 extend: {
-                    colors: {
-                        gold: '#FFD700',
-                        goldDark: '#B8860B',
-                        darkBg: '#0a0a0a',
-                        cardBg: '#1a1a1a'
-                    },
                     fontFamily: {
-                        cairo: ['Cairo', 'sans-serif'],
+                        serif: ['Cinzel', 'serif'],
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        gold: {
+                            100: '#FFF9C4',
+                            400: '#FFD700',
+                            500: '#D4AF37', // Luxury Gold
+                            600: '#B8860B',
+                            900: '#3E2723',
+                        },
+                        richBlack: '#050505',
+                        glass: 'rgba(255, 255, 255, 0.03)',
+                    },
+                    backgroundImage: {
+                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+                        'hero-pattern': "url('https://www.transparenttextures.com/patterns/carbon-fibre.png')",
                     }
                 }
             }
@@ -33,178 +43,311 @@
     </script>
 
     <style>
-        body { font-family: 'Cairo', sans-serif; background-color: #050505; color: white; }
-        .glow-text { text-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
-        .gradient-text {
-            background: linear-gradient(to bottom, #FFD700, #FFA500);
+        body {
+            background-color: #050505;
+            background-image: 
+                radial-gradient(circle at 50% 0%, #2a1f00 0%, #050505 60%);
+            color: white;
+            overflow-x: hidden;
+        }
+        
+        /* Text Gradient for Luxury Feel */
+        .text-gold-gradient {
+            background: linear-gradient(to right, #BF953F, #FCF6BA, #B38728, #FBF5B7, #AA771C);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shine 4s linear infinite;
         }
-        .coin-float { animation: float 3s ease-in-out infinite; }
+
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        /* Glass Card Effect */
+        .glass-card {
+            background: rgba(20, 20, 20, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(212, 175, 55, 0.15);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        
+        .glass-card:hover {
+            border-color: rgba(212, 175, 55, 0.5);
+            transform: translateY(-5px);
+            transition: all 0.4s ease;
+        }
+
+        /* Coin Animation */
+        .coin-float {
+            animation: float 4s ease-in-out infinite;
+            filter: drop-shadow(0 0 40px rgba(212, 175, 55, 0.3));
+        }
+        
         @keyframes float {
-            0% { transform: translateY(0px); }
+            0%, 100% { transform: translateY(0); }
             50% { transform: translateY(-20px); }
-            100% { transform: translateY(0px); }
         }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #D4AF37; border-radius: 4px; }
     </style>
 </head>
-<body class="bg-darkBg text-white overflow-x-hidden">
+<body class="font-sans">
 
-    <nav class="fixed w-full z-50 bg-black/80 backdrop-blur-md border-b border-gold/20">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <div class="text-2xl font-bold text-gold tracking-wider">$CIK</div>
-            <div class="hidden md:flex space-x-8 space-x-reverse">
-                <a href="#home" class="hover:text-gold transition">الرئيسية</a>
-                <a href="#about" class="hover:text-gold transition">عن العملة</a>
-                <a href="#tokenomics" class="hover:text-gold transition">الاقتصاديات</a>
-                <a href="#roadmap" class="hover:text-gold transition">الخطة</a>
+    <nav class="fixed w-full z-50 top-0 transition-all duration-300" id="navbar">
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-md border-b border-white/5"></div>
+        <div class="container mx-auto px-6 py-4 relative flex justify-between items-center">
+            <a href="#" class="text-2xl font-serif font-bold text-gold-gradient tracking-widest">$CIK</a>
+            
+            <div class="hidden md:flex items-center gap-8 text-sm font-semibold tracking-wider text-gray-300 uppercase">
+                <a href="#about" class="hover:text-gold-400 transition-colors">About</a>
+                <a href="#tokenomics" class="hover:text-gold-400 transition-colors">Tokenomics</a>
+                <a href="#roadmap" class="hover:text-gold-400 transition-colors">Roadmap</a>
             </div>
-            <a href="https://t.me/cik3000" target="_blank" class="bg-gold text-black font-bold py-2 px-6 rounded-full hover:bg-white transition transform hover:scale-105">
-                انضم للتليجرام <i class="fab fa-telegram pr-2"></i>
+
+            <a href="https://t.me/cik3000" target="_blank" class="hidden md:block bg-gold-500 hover:bg-gold-400 text-black font-bold py-2 px-6 rounded-sm transition-all tracking-wide transform hover:scale-105">
+                JOIN TELEGRAM
             </a>
         </div>
     </nav>
 
-    <section id="home" class="min-h-screen flex flex-col items-center justify-center text-center pt-20 px-4 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]">
-        
-        <div class="mb-8 relative">
-            <div class="absolute inset-0 bg-gold rounded-full blur-3xl opacity-20 animate-pulse"></div>
-            <img src="cik-logo.png" alt="CIK Coin" class="w-64 h-64 md:w-80 md:h-80 object-cover rounded-full border-4 border-gold shadow-[0_0_50px_rgba(255,215,0,0.4)] coin-float relative z-10 mx-auto">
-        </div>
+    <section class="min-h-screen flex items-center justify-center relative pt-20 overflow-hidden">
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-gold-600/10 rounded-full blur-[120px]"></div>
+        <div class="absolute bottom-0 right-0 w-[500px] h-[500px] bg-gold-500/5 rounded-full blur-[100px]"></div>
 
-        <h1 class="text-5xl md:text-7xl font-black mb-4 glow-text">CIK <span class="gradient-text">COIN</span></h1>
-        <p class="text-xl md:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto">
-            العملة الألطف في عالم الكريبتو! انضم إلى ثورة الكتاكيت الذهبية الآن.
-        </p>
-
-        <div class="bg-cardBg border border-gold/30 p-4 rounded-xl max-w-2xl w-full flex flex-col md:flex-row items-center justify-between gap-4 mb-8 mx-auto shadow-lg">
-            <span class="text-gold font-bold whitespace-nowrap">CA:</span>
-            <code id="contractAddress" class="text-sm md:text-base text-gray-300 break-all font-mono select-all">0x182976fac92c6282c4afa9f63b3ff52f8e54570d</code>
-            <button onclick="copyContract()" class="bg-gold/20 hover:bg-gold hover:text-black text-gold border border-gold px-4 py-2 rounded-lg transition duration-300 flex items-center gap-2">
-                <span id="copyBtnText">نسخ</span> <i class="far fa-copy"></i>
-            </button>
-        </div>
-
-        <div class="flex gap-4">
-            <a href="https://x.com/cik_coin" target="_blank" class="bg-black border border-gray-700 p-3 rounded-full text-2xl hover:text-gold hover:border-gold transition"><i class="fab fa-twitter"></i></a>
-            <a href="https://t.me/cik3000" target="_blank" class="bg-black border border-gray-700 p-3 rounded-full text-2xl hover:text-blue-400 hover:border-blue-400 transition"><i class="fab fa-telegram"></i></a>
-            <a href="mailto:Info.cik@cikcoin.art" class="bg-black border border-gray-700 p-3 rounded-full text-2xl hover:text-red-400 hover:border-red-400 transition"><i class="fas fa-envelope"></i></a>
-        </div>
-    </section>
-
-    <section id="about" class="py-20 bg-gradient-to-b from-darkBg to-cardBg">
-        <div class="container mx-auto px-6 text-center">
-            <h2 class="text-4xl font-bold text-gold mb-8">لماذا $CIK؟ 🐣</h2>
-            <p class="text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed">
-                لقد وصل الصوص الذهبي ليغير قواعد اللعبة! <br>
-                $CIK هي عملة ميم مجتمعية تهدف للوصول إلى القمر بأجنحة صغيرة ولكن بعزيمة قوية. 
-                نحن نركز على الشفافية، قوة المجتمع، وبالطبع... اللطافة التي لا تقاوم.
-            </p>
-        </div>
-    </section>
-
-    <section id="tokenomics" class="py-20 bg-darkBg">
-        <div class="container mx-auto px-6">
-            <h2 class="text-4xl font-bold text-center text-gold mb-12">اقتصاديات الكتكوت</h2>
-            <div class="grid md:grid-cols-3 gap-8 text-center">
-                
-                <div class="bg-cardBg p-8 rounded-2xl border border-gray-800 hover:border-gold transition transform hover:-translate-y-2">
-                    <div class="text-5xl text-gold mb-4"><i class="fas fa-coins"></i></div>
-                    <h3 class="text-2xl font-bold mb-2">اسم العملة</h3>
-                    <p class="text-gray-400">CIK COIN ($CIK)</p>
-                </div>
-
-                <div class="bg-cardBg p-8 rounded-2xl border border-gray-800 hover:border-gold transition transform hover:-translate-y-2">
-                    <div class="text-5xl text-gold mb-4"><i class="fas fa-hand-holding-dollar"></i></div>
-                    <h3 class="text-2xl font-bold mb-2">الضرائب</h3>
-                    <p class="text-gray-400">0% شراء / 0% بيع</p>
-                </div>
-
-                <div class="bg-cardBg p-8 rounded-2xl border border-gray-800 hover:border-gold transition transform hover:-translate-y-2">
-                    <div class="text-5xl text-gold mb-4"><i class="fas fa-fire"></i></div>
-                    <h3 class="text-2xl font-bold mb-2">السيولة</h3>
-                    <p class="text-gray-400">محروقة / مقفلة للأبد</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="roadmap" class="py-20 bg-gradient-to-b from-cardBg to-darkBg">
-        <div class="container mx-auto px-6">
-            <h2 class="text-4xl font-bold text-center text-gold mb-12">خارطة الطريق 🚀</h2>
-            <div class="space-y-8 max-w-4xl mx-auto">
-                
-                <div class="flex flex-col md:flex-row gap-6 items-center bg-black/50 p-6 rounded-xl border-r-4 border-gold">
-                    <div class="text-4xl">🐣</div>
-                    <div class="text-right flex-1">
-                        <h3 class="text-2xl font-bold text-gold">المرحلة 1: الفقس</h3>
-                        <ul class="list-disc list-inside text-gray-300 mt-2">
-                            <li>إطلاق الموقع الإلكتروني</li>
-                            <li>بناء مجتمع تليجرام وتويتر</li>
-                            <li>الإطلاق العادل للعملة</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="flex flex-col md:flex-row gap-6 items-center bg-black/50 p-6 rounded-xl border-r-4 border-yellow-600">
-                    <div class="text-4xl">🐥</div>
-                    <div class="text-right flex-1">
-                        <h3 class="text-2xl font-bold text-yellow-500">المرحلة 2: تعلم الطيران</h3>
-                        <ul class="list-disc list-inside text-gray-300 mt-2">
-                            <li>تسويق مكثف مع المؤثرين</li>
-                            <li>1000 حامل للعملة (Holders)</li>
-                            <li>الإدراج في CoinGecko</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="flex flex-col md:flex-row gap-6 items-center bg-black/50 p-6 rounded-xl border-r-4 border-orange-600">
-                    <div class="text-4xl">🚀</div>
-                    <div class="text-right flex-1">
-                        <h3 class="text-2xl font-bold text-orange-500">المرحلة 3: إلى القمر</h3>
-                        <ul class="list-disc list-inside text-gray-300 mt-2">
-                            <li>إدراج في منصات CEX</li>
-                            <li>شراكات عالمية</li>
-                            <li>مفاجآت للمجتمع</li>
-                        </ul>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    <footer class="bg-black py-10 border-t border-gray-900">
-        <div class="container mx-auto px-6 text-center">
-            <img src="cik-logo.png" alt="Logo" class="w-16 mx-auto mb-4 rounded-full">
-            <h3 class="text-2xl font-bold text-gold mb-6">$CIK</h3>
+        <div class="container mx-auto px-6 relative z-10 grid md:grid-cols-2 gap-12 items-center">
             
-            <div class="flex justify-center gap-6 mb-8">
-                <a href="https://x.com/cik_coin" class="text-gray-400 hover:text-white text-2xl transition"><i class="fab fa-twitter"></i></a>
-                <a href="https://t.me/cik3000" class="text-gray-400 hover:text-white text-2xl transition"><i class="fab fa-telegram"></i></a>
-                <a href="mailto:Info.cik@cikcoin.art" class="text-gray-400 hover:text-white text-2xl transition"><i class="fas fa-envelope"></i></a>
+            <div class="text-left space-y-6" data-aos="fade-right" data-aos-duration="1000">
+                <div class="inline-block px-4 py-1 border border-gold-500/30 rounded-full bg-gold-500/5">
+                    <span class="text-gold-400 text-xs font-bold tracking-[0.2em] uppercase">The Golden Standard</span>
+                </div>
+                
+                <h1 class="text-5xl md:text-7xl font-serif font-bold leading-tight text-white">
+                    Discover <br>
+                    <span class="text-gold-gradient">CIK COIN</span>
+                </h1>
+                
+                <p class="text-gray-400 text-lg md:text-xl max-w-lg font-light leading-relaxed">
+                    An elite meme currency built for a community that values strength, transparency, and prosperity. The chick has hatched, and it's pure gold.
+                </p>
+
+                <div class="mt-8 glass-card p-1 rounded-lg max-w-md flex items-center justify-between group">
+                    <div class="px-4 py-3 overflow-hidden">
+                        <p class="text-xs text-gold-500 uppercase tracking-wider mb-1">Smart Contract</p>
+                        <p id="contractAddress" class="font-mono text-gray-300 text-sm truncate group-hover:text-white transition">0x182976fac92c6282c4afa9f63b3ff52f8e54570d</p>
+                    </div>
+                    <button onclick="copyContract()" class="bg-gold-500 hover:bg-white hover:text-black text-black px-6 py-4 font-bold transition-all">
+                        <i class="far fa-copy"></i>
+                    </button>
+                </div>
+
+                <div class="flex gap-4 pt-4">
+                    <a href="#" class="flex-1 text-center border border-gold-500 text-gold-500 py-3 hover:bg-gold-500 hover:text-black transition font-bold tracking-wider">BUY NOW</a>
+                    <a href="https://x.com/cik_coin" class="px-6 py-3 border border-gray-700 text-gray-400 hover:border-white hover:text-white transition"><i class="fab fa-twitter"></i></a>
+                    <a href="mailto:Info.cik@cikcoin.art" class="px-6 py-3 border border-gray-700 text-gray-400 hover:border-white hover:text-white transition"><i class="fas fa-envelope"></i></a>
+                </div>
             </div>
 
-            <p class="text-gray-600 text-sm mb-4">
-                إخلاء مسؤولية: $CIK هي عملة ميم للترفيه. العملات الرقمية تنطوي على مخاطر عالية.
-            </p>
-            <p class="text-gray-700 text-sm">© 2024 CIK COIN. جميع الحقوق محفوظة.</p>
+            <div class="relative flex justify-center" data-aos="fade-left" data-aos-duration="1200">
+                <div class="absolute inset-0 border border-gold-500/20 rounded-full scale-110 animate-[spin_20s_linear_infinite]"></div>
+                <div class="absolute inset-0 border border-dashed border-gold-500/20 rounded-full scale-125 animate-[spin_30s_linear_infinite_reverse]"></div>
+                
+                <img src="cik-logo.png" alt="CIK Coin" class="w-72 h-72 md:w-[450px] md:h-[450px] object-cover rounded-full coin-float shadow-2xl border border-gold-500/10">
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="py-24 relative bg-richBlack">
+        <div class="container mx-auto px-6">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <h2 class="text-3xl md:text-5xl font-serif font-bold text-white mb-4">The <span class="text-gold-500">Legacy</span></h2>
+                <div class="w-24 h-1 bg-gold-500 mx-auto"></div>
+                <p class="mt-6 text-gray-400 max-w-2xl mx-auto">
+                    $CIK is not just a token; it is a movement. Representing the golden potential within the meme economy, we combine viral appeal with a solid community foundation.
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="glass-card p-8 rounded-xl text-center" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-16 h-16 mx-auto bg-gold-500/10 rounded-full flex items-center justify-center text-gold-500 text-2xl mb-6">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-serif font-bold mb-3">Secure & Safe</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">Contract verified and liquidity structure designed for long-term stability and trust.</p>
+                </div>
+
+                <div class="glass-card p-8 rounded-xl text-center relative overflow-hidden" data-aos="fade-up" data-aos-delay="200">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gold-500"></div> <div class="w-16 h-16 mx-auto bg-gold-500/10 rounded-full flex items-center justify-center text-gold-500 text-2xl mb-6">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="text-xl font-serif font-bold mb-3">Elite Community</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">Powered by a dedicated army of holders. We don't just hype; we build.</p>
+                </div>
+
+                <div class="glass-card p-8 rounded-xl text-center" data-aos="fade-up" data-aos-delay="300">
+                    <div class="w-16 h-16 mx-auto bg-gold-500/10 rounded-full flex items-center justify-center text-gold-500 text-2xl mb-6">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="text-xl font-serif font-bold mb-3">Organic Growth</h3>
+                    <p class="text-gray-500 text-sm leading-relaxed">No artificial pumps. Just pure, organic marketing and community-driven value.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="tokenomics" class="py-24 bg-[#080808] relative">
+        <div class="absolute left-0 top-1/2 -translate-y-1/2 w-1/3 h-full bg-gradient-to-r from-gold-900/10 to-transparent"></div>
+        
+        <div class="container mx-auto px-6 relative z-10">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-16">
+                
+                <div class="w-full md:w-1/2" data-aos="fade-right">
+                    <h2 class="text-4xl md:text-6xl font-serif font-bold mb-8">Tokenomics <br><span class="text-gold-500 text-2xl md:text-4xl">Transparency Verified</span></h2>
+                    <p class="text-gray-400 mb-8">
+                        We believe in a fair economy. No hidden fees, no tricks. Just a straightforward path to the moon for every $CIK holder.
+                    </p>
+                    
+                    <ul class="space-y-6">
+                        <li class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-gold-500 flex items-center justify-center text-black font-bold rounded">0%</div>
+                            <div>
+                                <h4 class="font-bold text-white">Buy Tax</h4>
+                                <p class="text-sm text-gray-500">Entry is free for everyone.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-gold-500 flex items-center justify-center text-black font-bold rounded">0%</div>
+                            <div>
+                                <h4 class="font-bold text-white">Sell Tax</h4>
+                                <p class="text-sm text-gray-500">Exit whenever you want.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-gold-500 flex items-center justify-center text-black font-bold rounded"><i class="fas fa-lock"></i></div>
+                            <div>
+                                <h4 class="font-bold text-white">Liquidity</h4>
+                                <p class="text-sm text-gray-500">100% Burned / Locked.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="w-full md:w-1/2 relative" data-aos="zoom-in">
+                    <div class="aspect-square rounded-full border border-gold-500/20 p-12 relative flex items-center justify-center bg-gradient-radial from-gold-900/20 to-transparent">
+                         <img src="cik-logo.png" class="w-32 opacity-80" alt="CIK">
+                         
+                         <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-6 bg-black border border-gold-500 px-4 py-2 rounded-full text-gold-500 font-bold text-sm">SUPPLY</div>
+                         <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-6 bg-black border border-gold-500 px-4 py-2 rounded-full text-gold-500 font-bold text-sm">LIQUIDITY</div>
+                         <div class="absolute left-0 top-1/2 -translate-x-6 -translate-y-1/2 bg-black border border-gold-500 px-4 py-2 rounded-full text-gold-500 font-bold text-sm">MKTG</div>
+                         <div class="absolute right-0 top-1/2 translate-x-6 -translate-y-1/2 bg-black border border-gold-500 px-4 py-2 rounded-full text-gold-500 font-bold text-sm">BURN</div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <section id="roadmap" class="py-24">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-serif font-bold text-center mb-16 text-gold-gradient" data-aos="fade-down">Roadmap to Glory</h2>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="group" data-aos="fade-up" data-aos-delay="0">
+                    <div class="glass-card p-8 h-full rounded-t-2xl border-b-4 border-white/20 group-hover:border-gold-500 transition-colors">
+                        <span class="text-6xl text-white/5 font-black absolute top-4 right-4">01</span>
+                        <h3 class="text-2xl font-serif font-bold text-white mb-2">Inception</h3>
+                        <p class="text-gold-500 text-sm mb-6 tracking-widest uppercase">Phase One</p>
+                        <ul class="text-gray-400 space-y-3 text-sm">
+                            <li class="flex items-center gap-2"><i class="fas fa-check text-gold-500"></i> Website Launch</li>
+                            <li class="flex items-center gap-2"><i class="fas fa-check text-gold-500"></i> Community Building</li>
+                            <li class="flex items-center gap-2"><i class="fas fa-check text-gold-500"></i> Token Deployment</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="group" data-aos="fade-up" data-aos-delay="200">
+                    <div class="glass-card p-8 h-full rounded-t-2xl border-b-4 border-white/20 group-hover:border-gold-500 transition-colors">
+                        <span class="text-6xl text-white/5 font-black absolute top-4 right-4">02</span>
+                        <h3 class="text-2xl font-serif font-bold text-white mb-2">Expansion</h3>
+                        <p class="text-gold-500 text-sm mb-6 tracking-widest uppercase">Phase Two</p>
+                        <ul class="text-gray-400 space-y-3 text-sm">
+                            <li class="flex items-center gap-2"><i class="fas fa-arrow-right text-gold-500"></i> Influencer Marketing</li>
+                            <li class="flex items-center gap-2"><i class="fas fa-arrow-right text-gold-500"></i> 1,000+ Holders</li>
+                            <li class="flex items-center gap-2"><i class="fas fa-arrow-right text-gold-500"></i> CoinGecko Listing</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="group" data-aos="fade-up" data-aos-delay="400">
+                    <div class="glass-card p-8 h-full rounded-t-2xl border-b-4 border-white/20 group-hover:border-gold-500 transition-colors">
+                        <span class="text-6xl text-white/5 font-black absolute top-4 right-4">03</span>
+                        <h3 class="text-2xl font-serif font-bold text-white mb-2">Dominance</h3>
+                        <p class="text-gold-500 text-sm mb-6 tracking-widest uppercase">Phase Three</p>
+                        <ul class="text-gray-400 space-y-3 text-sm">
+                            <li class="flex items-center gap-2"><i class="fas fa-circle text-xs text-gold-500"></i> CEX Listings</li>
+                            <li class="flex items-center gap-2"><i class="fas fa-circle text-xs text-gold-500"></i> Global Partnerships</li>
+                            <li class="flex items-center gap-2"><i class="fas fa-circle text-xs text-gold-500"></i> CIK Merchandise</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="bg-black border-t border-white/10 pt-16 pb-8">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-center mb-12">
+                <div class="text-center md:text-left mb-8 md:mb-0">
+                    <h2 class="text-3xl font-serif font-bold text-white mb-2">$CIK</h2>
+                    <p class="text-gray-500 text-sm">The Golden Chick of the Blockchain.</p>
+                </div>
+                <div class="flex gap-6">
+                    <a href="https://x.com/cik_coin" class="w-12 h-12 rounded-full bg-white/5 hover:bg-gold-500 hover:text-black flex items-center justify-center transition-all"><i class="fab fa-twitter text-xl"></i></a>
+                    <a href="https://t.me/cik3000" class="w-12 h-12 rounded-full bg-white/5 hover:bg-blue-500 hover:text-white flex items-center justify-center transition-all"><i class="fab fa-telegram text-xl"></i></a>
+                    <a href="mailto:Info.cik@cikcoin.art" class="w-12 h-12 rounded-full bg-white/5 hover:bg-red-500 hover:text-white flex items-center justify-center transition-all"><i class="fas fa-envelope text-xl"></i></a>
+                </div>
+            </div>
+            
+            <div class="border-t border-white/5 pt-8 text-center text-gray-600 text-xs">
+                <p>&copy; 2024 CIK COIN. All rights reserved. <br>Cryptocurrency investments carry high risk. Please DYOR.</p>
+            </div>
         </div>
     </footer>
 
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
+        // Initialize Animation Library
+        AOS.init({
+            once: true,
+            offset: 100,
+            duration: 800,
+        });
+
+        // Copy Function
         function copyContract() {
             const caText = document.getElementById("contractAddress").innerText;
             navigator.clipboard.writeText(caText).then(() => {
-                const btnText = document.getElementById("copyBtnText");
-                const originalText = btnText.innerText;
-                
-                btnText.innerText = "تم النسخ!";
-                setTimeout(() => {
-                    btnText.innerText = originalText;
-                }, 2000);
+                alert("Contract Address Copied to Clipboard!");
             });
         }
+
+        // Navbar Blur on Scroll
+        window.addEventListener('scroll', function() {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('py-2');
+                nav.classList.remove('py-4');
+            } else {
+                nav.classList.add('py-4');
+                nav.classList.remove('py-2');
+            }
+        });
     </script>
 </body>
 </html>
