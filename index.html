@@ -1,162 +1,210 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>معاينة مضمونة</title>
-<style>
-  body{margin:0;background:#0f172a;color:#e2e8f0;font:16px/1.6 system-ui,Segoe UI,Roboto,Arial}
-  header{padding:14px 18px;border-bottom:1px solid #1f2a44}
-  h1{margin:0;font-size:18px}
-  .wrap{max-width:1000px;margin:16px auto;display:grid;gap:12px;grid-template-columns:360px 1fr}
-  @media (max-width:900px){.wrap{grid-template-columns:1fr}}
-  .panel{background:#0b1220;border:1px solid #1f2a44;border-radius:12px;overflow:hidden}
-  .panel .head{padding:8px 10px;border-bottom:1px solid #1f2a44;background:#0e1a2c;display:flex;gap:8px;align-items:center}
-  .panel .body{padding:10px}
-  textarea{width:100%;height:280px;background:#0b1220;color:#e2e8f0;border:1px solid #22314d;border-radius:8px;padding:10px;resize:vertical;font-family:ui-monospace,Consolas,monospace}
-  .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .btn{border:0;border-radius:10px;padding:9px 14px;font-weight:700;cursor:pointer}
-  .btn.run{background:#22c55e;color:#fff}
-  .btn.save{background:#3b82f6;color:#fff}
-  .btn.open{background:#0b1220;color:#cbd5e1;border:1px solid #22314d}
-  .pill{padding:6px 10px;border-radius:999px;background:#0b1220;border:1px solid #22314d;color:#cbd5e1;font-size:12px}
-  iframe{width:100%;height:520px;border:0;background:#fff;border-radius:12px}
-</style>
-</head>
-<body>
-  <header><h1>معاينة كود — تعمل دائمًا</h1></header>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CIK COIN ($CIK) - العملة الذهبية</title>
+    <meta name="description" content="الموقع الرسمي لعملة CIK COIN. انضم إلى جيش الكتاكيت الذهبية.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;700;900&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: '#FFD700',
+                        goldDark: '#B8860B',
+                        darkBg: '#0a0a0a',
+                        cardBg: '#1a1a1a'
+                    },
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
 
-  <div class="wrap">
-    <!-- الإدخال -->
-    <section class="panel">
-      <div class="head row">
-        <span class="pill">1) ألصِق كودك</span>
-      </div>
-      <div class="body">
-        <textarea id="code"><h1>مرحبًا 👋</h1>
-<p>هذا مثال. يمكنك وضع HTML كامل أو جزء HTML.</p>
-<button onclick="alert('عملت!')">جرّب التنبيه</button></textarea>
-        <div class="row" style="margin-top:10px">
-          <label class="pill"><input type="checkbox" id="autorun" checked> تشغيل تلقائي</label>
-          <button id="run" class="btn run">تشغيل</button>
-          <button id="open" class="btn open">فتح في نافذة</button>
-          <button id="save" class="btn save">تنزيل</button>
+    <style>
+        body { font-family: 'Cairo', sans-serif; background-color: #050505; color: white; }
+        .glow-text { text-shadow: 0 0 20px rgba(255, 215, 0, 0.6); }
+        .gradient-text {
+            background: linear-gradient(to bottom, #FFD700, #FFA500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .coin-float { animation: float 3s ease-in-out infinite; }
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+</head>
+<body class="bg-darkBg text-white overflow-x-hidden">
+
+    <nav class="fixed w-full z-50 bg-black/80 backdrop-blur-md border-b border-gold/20">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <div class="text-2xl font-bold text-gold tracking-wider">$CIK</div>
+            <div class="hidden md:flex space-x-8 space-x-reverse">
+                <a href="#home" class="hover:text-gold transition">الرئيسية</a>
+                <a href="#about" class="hover:text-gold transition">عن العملة</a>
+                <a href="#tokenomics" class="hover:text-gold transition">الاقتصاديات</a>
+                <a href="#roadmap" class="hover:text-gold transition">الخطة</a>
+            </div>
+            <a href="https://t.me/cik3000" target="_blank" class="bg-gold text-black font-bold py-2 px-6 rounded-full hover:bg-white transition transform hover:scale-105">
+                انضم للتليجرام <i class="fab fa-telegram pr-2"></i>
+            </a>
         </div>
-        <small style="color:#94a3b8;display:block;margin-top:6px">اختصار: Ctrl+Enter للتشغيل — Ctrl+S للتنزيل</small>
-      </div>
+    </nav>
+
+    <section id="home" class="min-h-screen flex flex-col items-center justify-center text-center pt-20 px-4 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')]">
+        
+        <div class="mb-8 relative">
+            <div class="absolute inset-0 bg-gold rounded-full blur-3xl opacity-20 animate-pulse"></div>
+            <img src="cik-logo.png" alt="CIK Coin" class="w-64 h-64 md:w-80 md:h-80 object-cover rounded-full border-4 border-gold shadow-[0_0_50px_rgba(255,215,0,0.4)] coin-float relative z-10 mx-auto">
+        </div>
+
+        <h1 class="text-5xl md:text-7xl font-black mb-4 glow-text">CIK <span class="gradient-text">COIN</span></h1>
+        <p class="text-xl md:text-2xl text-gray-300 mb-8 max-w-2xl mx-auto">
+            العملة الألطف في عالم الكريبتو! انضم إلى ثورة الكتاكيت الذهبية الآن.
+        </p>
+
+        <div class="bg-cardBg border border-gold/30 p-4 rounded-xl max-w-2xl w-full flex flex-col md:flex-row items-center justify-between gap-4 mb-8 mx-auto shadow-lg">
+            <span class="text-gold font-bold whitespace-nowrap">CA:</span>
+            <code id="contractAddress" class="text-sm md:text-base text-gray-300 break-all font-mono select-all">0x182976fac92c6282c4afa9f63b3ff52f8e54570d</code>
+            <button onclick="copyContract()" class="bg-gold/20 hover:bg-gold hover:text-black text-gold border border-gold px-4 py-2 rounded-lg transition duration-300 flex items-center gap-2">
+                <span id="copyBtnText">نسخ</span> <i class="far fa-copy"></i>
+            </button>
+        </div>
+
+        <div class="flex gap-4">
+            <a href="https://x.com/cik_coin" target="_blank" class="bg-black border border-gray-700 p-3 rounded-full text-2xl hover:text-gold hover:border-gold transition"><i class="fab fa-twitter"></i></a>
+            <a href="https://t.me/cik3000" target="_blank" class="bg-black border border-gray-700 p-3 rounded-full text-2xl hover:text-blue-400 hover:border-blue-400 transition"><i class="fab fa-telegram"></i></a>
+            <a href="mailto:Info.cik@cikcoin.art" class="bg-black border border-gray-700 p-3 rounded-full text-2xl hover:text-red-400 hover:border-red-400 transition"><i class="fas fa-envelope"></i></a>
+        </div>
     </section>
 
-    <!-- المعاينة -->
-    <section class="panel">
-      <div class="head row">
-        <span class="pill" id="status">جاهز</span>
-      </div>
-      <div class="body">
-        <iframe id="view" sandbox="allow-scripts allow-forms allow-modals allow-popups"></iframe>
-      </div>
+    <section id="about" class="py-20 bg-gradient-to-b from-darkBg to-cardBg">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold text-gold mb-8">لماذا $CIK؟ 🐣</h2>
+            <p class="text-lg text-gray-300 max-w-3xl mx-auto leading-relaxed">
+                لقد وصل الصوص الذهبي ليغير قواعد اللعبة! <br>
+                $CIK هي عملة ميم مجتمعية تهدف للوصول إلى القمر بأجنحة صغيرة ولكن بعزيمة قوية. 
+                نحن نركز على الشفافية، قوة المجتمع، وبالطبع... اللطافة التي لا تقاوم.
+            </p>
+        </div>
     </section>
-  </div>
 
-<script>
-  const $ = s => document.querySelector(s);
-  const codeEl = $('#code'), view = $('#view'), statusEl = $('#status');
-  const runBtn = $('#run'), saveBtn = $('#save'), openBtn = $('#open'), autorun = $('#autorun');
+    <section id="tokenomics" class="py-20 bg-darkBg">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center text-gold mb-12">اقتصاديات الكتكوت</h2>
+            <div class="grid md:grid-cols-3 gap-8 text-center">
+                
+                <div class="bg-cardBg p-8 rounded-2xl border border-gray-800 hover:border-gold transition transform hover:-translate-y-2">
+                    <div class="text-5xl text-gold mb-4"><i class="fas fa-coins"></i></div>
+                    <h3 class="text-2xl font-bold mb-2">اسم العملة</h3>
+                    <p class="text-gray-400">CIK COIN ($CIK)</p>
+                </div>
 
-  // يلفّ أي جزء HTML بصفحة كاملة + meta viewport
-  function wrapIfNeeded(html){
-    const hasDoc = /<!DOCTYPE|<html[\s>]/i.test(html);
-    if (hasDoc) return ensureViewport(html);
-    return `<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Preview</title>
-</head>
-<body>
-${html}
-</body>
-</html>`;
-  }
-  function ensureViewport(html){
-    if(!/<meta[^>]+name=["']viewport["']/i.test(html)){
-      if(/<head[^>]*>/i.test(html)){
-        html = html.replace(/<head[^>]*>/i, m => m + '\n<meta name="viewport" content="width=device-width, initial-scale=1">');
-      }else{
-        html = `<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width, initial-scale=1"></head><body>${html}</body></html>`;
-      }
-    }
-    return html;
-  }
+                <div class="bg-cardBg p-8 rounded-2xl border border-gray-800 hover:border-gold transition transform hover:-translate-y-2">
+                    <div class="text-5xl text-gold mb-4"><i class="fas fa-hand-holding-dollar"></i></div>
+                    <h3 class="text-2xl font-bold mb-2">الضرائب</h3>
+                    <p class="text-gray-400">0% شراء / 0% بيع</p>
+                </div>
 
-  // تشغيل: srcdoc أولًا، وإن لم يدعم المتصفح نستخدم Blob URL
-  function run(){
-    const raw = codeEl.value || '';
-    const html = wrapIfNeeded(raw);
-    try{
-      // طريقة srcdoc (الأفضل)
-      view.removeAttribute('src'); // نحذف أي src قديم
-      view.srcdoc = html;
-      statusEl.textContent = 'معاينة باستخدام srcdoc';
-    }catch(e){
-      // بديل Blob URL
-      const blob = new Blob([html], {type:'text/html;charset=utf-8'});
-      const url = URL.createObjectURL(blob);
-      view.src = url;
-      statusEl.textContent = 'معاينة باستخدام Blob URL';
-      // تنظيف الرابط المؤقت بعد تحميل الإطار
-      view.onload = ()=> URL.revokeObjectURL(url);
-    }
-  }
+                <div class="bg-cardBg p-8 rounded-2xl border border-gray-800 hover:border-gold transition transform hover:-translate-y-2">
+                    <div class="text-5xl text-gold mb-4"><i class="fas fa-fire"></i></div>
+                    <h3 class="text-2xl font-bold mb-2">السيولة</h3>
+                    <p class="text-gray-400">محروقة / مقفلة للأبد</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-  // تنزيل الملف الحالي
-  function download(){
-    const blob = new Blob([wrapIfNeeded(codeEl.value)], {type:'text/html;charset=utf-8'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a'); a.href = url; a.download = 'preview.html'; a.click();
-    URL.revokeObjectURL(url);
-  }
+    <section id="roadmap" class="py-20 bg-gradient-to-b from-cardBg to-darkBg">
+        <div class="container mx-auto px-6">
+            <h2 class="text-4xl font-bold text-center text-gold mb-12">خارطة الطريق 🚀</h2>
+            <div class="space-y-8 max-w-4xl mx-auto">
+                
+                <div class="flex flex-col md:flex-row gap-6 items-center bg-black/50 p-6 rounded-xl border-r-4 border-gold">
+                    <div class="text-4xl">🐣</div>
+                    <div class="text-right flex-1">
+                        <h3 class="text-2xl font-bold text-gold">المرحلة 1: الفقس</h3>
+                        <ul class="list-disc list-inside text-gray-300 mt-2">
+                            <li>إطلاق الموقع الإلكتروني</li>
+                            <li>بناء مجتمع تليجرام وتويتر</li>
+                            <li>الإطلاق العادل للعملة</li>
+                        </ul>
+                    </div>
+                </div>
 
-  // فتح في نافذة جديدة (يعمل دائمًا لأنّه يُنفَّذ بضغط زر)
-  function openWindow(){
-    const html = wrapIfNeeded(codeEl.value);
-    const w = window.open('', '_blank', 'noopener,width=900,height=700');
-    if(!w){ alert('المتصفح منع النافذة. اسمح بالنوافذ المنبثقة مؤقتًا.'); return; }
-    w.document.open(); w.document.write(html); w.document.close();
-  }
+                <div class="flex flex-col md:flex-row gap-6 items-center bg-black/50 p-6 rounded-xl border-r-4 border-yellow-600">
+                    <div class="text-4xl">🐥</div>
+                    <div class="text-right flex-1">
+                        <h3 class="text-2xl font-bold text-yellow-500">المرحلة 2: تعلم الطيران</h3>
+                        <ul class="list-disc list-inside text-gray-300 mt-2">
+                            <li>تسويق مكثف مع المؤثرين</li>
+                            <li>1000 حامل للعملة (Holders)</li>
+                            <li>الإدراج في CoinGecko</li>
+                        </ul>
+                    </div>
+                </div>
 
-  // حفظ تلقائي وتشغيل تلقائي
-  const LS = 'sure_preview_v1';
-  function load(){
-    try{
-      const s = JSON.parse(localStorage.getItem(LS));
-      if(s){ codeEl.value = s.code || ''; autorun.checked = !!s.autorun; }
-    }catch{}
-  }
-  function save(){
-    localStorage.setItem(LS, JSON.stringify({ code: codeEl.value, autorun: autorun.checked }));
-  }
+                <div class="flex flex-col md:flex-row gap-6 items-center bg-black/50 p-6 rounded-xl border-r-4 border-orange-600">
+                    <div class="text-4xl">🚀</div>
+                    <div class="text-right flex-1">
+                        <h3 class="text-2xl font-bold text-orange-500">المرحلة 3: إلى القمر</h3>
+                        <ul class="list-disc list-inside text-gray-300 mt-2">
+                            <li>إدراج في منصات CEX</li>
+                            <li>شراكات عالمية</li>
+                            <li>مفاجآت للمجتمع</li>
+                        </ul>
+                    </div>
+                </div>
 
-  // أحداث
-  let deb=null;
-  codeEl.addEventListener('input', ()=>{
-    save();
-    if(autorun.checked){ clearTimeout(deb); deb = setTimeout(run, 150); }
-  });
-  runBtn.addEventListener('click', run);
-  saveBtn.addEventListener('click', download);
-  openBtn.addEventListener('click', openWindow);
-  autorun.addEventListener('change', save);
+            </div>
+        </div>
+    </section>
 
-  // اختصارات
-  window.addEventListener('keydown', e=>{
-    if((e.ctrlKey||e.metaKey) && e.key==='Enter'){ e.preventDefault(); run(); }
-    if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='s'){ e.preventDefault(); download(); }
-  });
+    <footer class="bg-black py-10 border-t border-gray-900">
+        <div class="container mx-auto px-6 text-center">
+            <img src="cik-logo.png" alt="Logo" class="w-16 mx-auto mb-4 rounded-full">
+            <h3 class="text-2xl font-bold text-gold mb-6">$CIK</h3>
+            
+            <div class="flex justify-center gap-6 mb-8">
+                <a href="https://x.com/cik_coin" class="text-gray-400 hover:text-white text-2xl transition"><i class="fab fa-twitter"></i></a>
+                <a href="https://t.me/cik3000" class="text-gray-400 hover:text-white text-2xl transition"><i class="fab fa-telegram"></i></a>
+                <a href="mailto:Info.cik@cikcoin.art" class="text-gray-400 hover:text-white text-2xl transition"><i class="fas fa-envelope"></i></a>
+            </div>
 
-  // إقلاع
-  load();
-  run();
-</script>
+            <p class="text-gray-600 text-sm mb-4">
+                إخلاء مسؤولية: $CIK هي عملة ميم للترفيه. العملات الرقمية تنطوي على مخاطر عالية.
+            </p>
+            <p class="text-gray-700 text-sm">© 2024 CIK COIN. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+
+    <script>
+        function copyContract() {
+            const caText = document.getElementById("contractAddress").innerText;
+            navigator.clipboard.writeText(caText).then(() => {
+                const btnText = document.getElementById("copyBtnText");
+                const originalText = btnText.innerText;
+                
+                btnText.innerText = "تم النسخ!";
+                setTimeout(() => {
+                    btnText.innerText = originalText;
+                }, 2000);
+            });
+        }
+    </script>
 </body>
 </html>
