@@ -1,254 +1,201 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CIK COIN | The New Standard</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
-    
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        display: ['Space Grotesk', 'sans-serif'],
-                    },
-                    colors: {
-                        primary: '#FFD700', // Classic Gold
-                        accent: '#F4E082', // Champagne
-                        surface: '#0F0F0F', // Lighter Black for cards
-                        dark: '#050505', // Deep Black
-                    },
-                    animation: {
-                        'spin-slow': 'spin 12s linear infinite',
-                        'blob': 'blob 7s infinite',
-                        'marquee': 'marquee 25s linear infinite',
-                    },
-                    keyframes: {
-                        blob: {
-                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
-                        },
-                        marquee: {
-                            '0%': { transform: 'translateX(0%)' },
-                            '100%': { transform: 'translateX(-100%)' },
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-
+    <title>محرر الأكواد السريع</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
-        body {
-            background-color: #050505;
-            color: #E5E5E5;
+        /* --- تنسيقات عامة --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; background: #1e1e1e; }
+
+        /* --- شاشة المحرر (Editor) --- */
+        #editor-container {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            width: 100%;
+            transition: 0.3s ease;
         }
 
-        /* Noise Texture Overlay for "Film Grain" look */
-        .bg-noise {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 50;
-            opacity: 0.03;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        .editor-header {
+            background: #252526;
+            color: #ccc;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
         }
 
-        /* Bento Grid Card Style */
-        .bento-card {
-            background: rgba(20, 20, 20, 0.4);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        .editor-title { font-weight: bold; font-size: 14px; letter-spacing: 1px; }
+
+        textarea {
+            flex: 1;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            border: none;
+            padding: 20px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 16px;
+            resize: none;
+            line-height: 1.5;
         }
         
-        .bento-card:hover {
-            border-color: rgba(255, 215, 0, 0.3);
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px -15px rgba(255, 215, 0, 0.1);
+        /* زر التشغيل العائم */
+        .run-btn {
+            position: fixed;
+            bottom: 30px;
+            left: 30px; /* لأنه عربي */
+            background: #0e639c;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.2s;
+        }
+        
+        .run-btn:hover { background: #1177bb; transform: scale(1.05); }
+
+        /* --- شاشة المعاينة (Preview) --- */
+        #preview-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            z-index: 100;
+            transform: translateY(100%); /* مخفي في الأسفل */
+            transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Custom Selection Color */
-        ::selection {
-            background: #FFD700;
-            color: black;
+        /* شريط الأدوات العلوي في وضع المعاينة */
+        .toolbar {
+            background: #333;
+            color: white;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            justify-content: space-between;
         }
+
+        .toolbar-btn {
+            background: #d9534f;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 14px;
+        }
+        
+        .toolbar-btn:hover { background: #c9302c; }
+
+        iframe {
+            flex: 1;
+            width: 100%;
+            border: none;
+            background: white; /* صفحة بيضاء للكود */
+        }
+
+        /* كلاس لتفعيل ظهور المعاينة */
+        .show-preview {
+            transform: translateY(0) !important;
+        }
+
     </style>
 </head>
-<body class="antialiased overflow-x-hidden selection:bg-primary selection:text-black">
-    
-    <div class="bg-noise"></div>
+<body>
 
-    <nav class="fixed w-full z-40 top-0 pt-6 px-4">
-        <div class="max-w-5xl mx-auto bento-card rounded-full px-6 py-3 flex justify-between items-center">
-            <div class="font-display font-bold text-xl tracking-tighter text-white">
-                CIK<span class="text-primary">.COIN</span>
-            </div>
-            <div class="hidden md:flex gap-8 text-sm font-medium text-gray-400">
-                <a href="#home" class="hover:text-white transition">Home</a>
-                <a href="#about" class="hover:text-white transition">Vision</a>
-                <a href="#tokenomics" class="hover:text-white transition">Metrics</a>
-            </div>
-            <a href="https://t.me/cik3000" class="bg-white text-black px-5 py-2 rounded-full text-sm font-bold hover:bg-primary transition-colors">
-                Connect Wallet
-            </a>
+    <div id="editor-container">
+        <div class="editor-header">
+            <span class="editor-title">محرر الأكواد المباشر</span>
+            <span style="font-size: 12px; opacity: 0.6;">HTML / CSS / JS</span>
         </div>
-    </nav>
-
-    <section id="home" class="relative min-h-screen flex flex-col justify-center items-center text-center px-4 pt-20">
-        <div class="absolute top-0 -left-4 w-72 h-72 bg-purple-900 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
-        <div class="absolute top-0 -right-4 w-72 h-72 bg-primary rounded-full mix-blend-multiply filter blur-xl opacity-10 animate-blob animation-delay-2000"></div>
-
-        <div class="z-10 relative max-w-4xl mx-auto space-y-8">
-            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-xs tracking-widest uppercase text-primary mb-4">
-                <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                System Operational
-            </div>
-
-            <h1 class="font-display text-6xl md:text-8xl font-medium tracking-tight leading-[0.9] text-white">
-                The Golden Era of <br>
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary via-white to-primary">Meme Assets.</span>
-            </h1>
-            
-            <p class="text-gray-400 text-lg max-w-xl mx-auto font-light leading-relaxed">
-                $CIK combines community strength with refined tokenomics. 
-                Designed for the astute investor who appreciates meme culture and serious growth.
-            </p>
-
-            <div class="flex flex-col md:flex-row gap-4 justify-center items-center pt-4">
-                <div class="group relative">
-                    <div class="absolute -inset-0.5 bg-gradient-to-r from-primary to-purple-600 rounded-lg blur opacity-30 group-hover:opacity-100 transition duration-1000 group-hover:duration-200"></div>
-                    <button onclick="copyContract()" class="relative bg-black border border-white/10 px-8 py-4 rounded-lg flex items-center gap-3 hover:bg-surface transition">
-                        <span class="text-gray-400 font-mono text-sm">CA: 0x18...570d</span>
-                        <i class="far fa-copy text-white"></i>
-                    </button>
-                </div>
-                <a href="https://t.me/cik3000" class="px-8 py-4 rounded-lg bg-white text-black font-bold hover:bg-gray-200 transition w-full md:w-auto">
-                    Join Community <i class="fas fa-arrow-right ml-2 transform -rotate-45"></i>
-                </a>
-            </div>
-        </div>
-
-        <div class="mt-16 relative z-10 pointer-events-none select-none">
-             <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[140%] h-[140%] bg-primary/10 blur-[60px] rounded-full"></div>
-            <img src="cik-logo.png" alt="CIK" class="w-48 md:w-64 animate-[bounce_3s_infinite]">
-        </div>
-    </section>
-
-    <div class="bg-primary text-black py-3 overflow-hidden border-y border-white/10">
-        <div class="whitespace-nowrap animate-marquee font-display font-bold text-lg tracking-widest uppercase flex gap-8">
-            <span>$CIK • Golden Opportunity • Community First • No Taxes •</span>
-            <span>$CIK • Golden Opportunity • Community First • No Taxes •</span>
-            <span>$CIK • Golden Opportunity • Community First • No Taxes •</span>
-            <span>$CIK • Golden Opportunity • Community First • No Taxes •</span>
-        </div>
+        <textarea id="code-input" placeholder="الصق الكود هنا (HTML, CSS, JS)..." spellcheck="false"></textarea>
+        
+        <button class="run-btn" onclick="runCode()">
+            <span class="material-icons">play_arrow</span>
+            معاينة الكود
+        </button>
     </div>
 
-    <section id="about" class="py-24 px-4 max-w-6xl mx-auto">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
-            
-            <div class="col-span-1 md:col-span-2 bento-card p-8 rounded-3xl flex flex-col justify-between min-h-[300px]">
-                <div>
-                    <h2 class="font-display text-3xl text-white mb-4">Not Just Another Token. <br>A Movement.</h2>
-                    <p class="text-gray-400 leading-relaxed max-w-md">
-                        The chick symbolizes new beginnings. $CIK is built on a foundation of transparency and organic community growth. We are redefining what a meme coin can achieve through united effort.
-                    </p>
-                </div>
-                <div class="mt-8 flex gap-4">
-                    <div class="text-primary font-display text-4xl">100%<span class="text-sm text-gray-500 block font-sans">Safe</span></div>
-                    <div class="w-px bg-white/10 h-12"></div>
-                    <div class="text-white font-display text-4xl">0%<span class="text-sm text-gray-500 block font-sans">Tax</span></div>
-                </div>
-            </div>
-
-            <div class="bento-card p-8 rounded-3xl flex flex-col justify-center items-center text-center group">
-                <div class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition">
-                    <i class="fas fa-shield-alt text-2xl text-primary"></i>
-                </div>
-                <h3 class="text-white font-display text-xl mb-2">Audited & Safe</h3>
-                <p class="text-sm text-gray-400">Contract ownership renounced (if applicable) and LP burned.</p>
-            </div>
-
-            <div class="bento-card p-8 rounded-3xl flex flex-col justify-center items-center text-center group">
-                <div class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition">
-                    <i class="fas fa-users text-2xl text-purple-400"></i>
-                </div>
-                <h3 class="text-white font-display text-xl mb-2">Community Driven</h3>
-                <p class="text-sm text-gray-400">No Venture Capital. No insiders. Just pure community power.</p>
-            </div>
-
-            <div id="tokenomics" class="col-span-1 md:col-span-2 bento-card p-8 rounded-3xl relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-10 opacity-10">
-                    <i class="fas fa-chart-pie text-9xl"></i>
-                </div>
-                <h3 class="font-display text-2xl text-white mb-6">Token Metrics</h3>
-                <div class="grid grid-cols-2 gap-8 relative z-10">
-                    <div>
-                        <p class="text-xs uppercase tracking-widest text-gray-500 mb-1">Total Supply</p>
-                        <p class="font-mono text-xl text-primary">1,000,000,000</p>
-                    </div>
-                    <div>
-                        <p class="text-xs uppercase tracking-widest text-gray-500 mb-1">Ticker</p>
-                        <p class="font-mono text-xl text-white">$CIK</p>
-                    </div>
-                    <div>
-                        <p class="text-xs uppercase tracking-widest text-gray-500 mb-1">Network</p>
-                        <p class="font-mono text-xl text-white">BSC / ETH</p>
-                    </div>
-                    <div>
-                        <p class="text-xs uppercase tracking-widest text-gray-500 mb-1">Liquidity</p>
-                        <p class="font-mono text-xl text-green-400">LOCKED</p>
-                    </div>
-                </div>
-            </div>
+    <div id="preview-container">
+        <div class="toolbar">
+            <span>نتيجة الكود:</span>
+            <button class="toolbar-btn" onclick="closePreview()">
+                <span class="material-icons">close</span>
+                إغلاق وتعديل
+            </button>
         </div>
-    </section>
-
-    <footer class="py-12 border-t border-white/5">
-        <div class="max-w-6xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-6">
-            <div class="flex items-center gap-3">
-                <img src="cik-logo.png" alt="Logo" class="w-8 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition">
-                <span class="font-display font-bold text-gray-300">CIK COIN</span>
-            </div>
-            
-            <div class="flex gap-6">
-                <a href="https://x.com/cik_coin" class="text-gray-500 hover:text-white transition"><i class="fab fa-twitter text-xl"></i></a>
-                <a href="https://t.me/cik3000" class="text-gray-500 hover:text-white transition"><i class="fab fa-telegram text-xl"></i></a>
-                <a href="mailto:Info.cik@cikcoin.art" class="text-gray-500 hover:text-white transition"><i class="fas fa-envelope text-xl"></i></a>
-            </div>
-
-            <p class="text-xs text-gray-600">© 2024 CIK Project. All rights reserved.</p>
-        </div>
-    </footer>
-
-    <div id="toast" class="fixed bottom-10 right-10 bg-white text-black px-6 py-3 rounded-lg shadow-2xl transform translate-y-24 transition-transform duration-300 z-50 flex items-center gap-3">
-        <i class="fas fa-check-circle text-green-500"></i>
-        <span class="font-bold text-sm">Address Copied!</span>
+        <iframe id="result-frame"></iframe>
     </div>
 
     <script>
-        // Copy Function with modern Toast
-        function copyContract() {
-            const ca = "0x182976fac92c6282c4afa9f63b3ff52f8e54570d";
-            navigator.clipboard.writeText(ca).then(() => {
-                const toast = document.getElementById('toast');
-                toast.classList.remove('translate-y-24'); // Show
-                setTimeout(() => {
-                    toast.classList.add('translate-y-24'); // Hide
-                }, 2000);
-            });
+        // العناصر
+        const codeInput = document.getElementById('code-input');
+        const previewContainer = document.getElementById('preview-container');
+        const frame = document.getElementById('result-frame');
+
+        // دالة تشغيل الكود
+        function runCode() {
+            const code = codeInput.value;
+
+            // فتح وثيقة الإطار وكتابة الكود فيها
+            const doc = frame.contentDocument || frame.contentWindow.document;
+            doc.open();
+            doc.write(code);
+            doc.close();
+
+            // إظهار شاشة المعاينة
+            previewContainer.classList.add('show-preview');
+        }
+
+        // دالة إغلاق المعاينة
+        function closePreview() {
+            // إخفاء شاشة المعاينة
+            previewContainer.classList.remove('show-preview');
+            
+            // خيار: هل تريد مسح الكود القديم عند العودة؟ 
+            // إذا كنت تريد مسح الكود لتبدأ من جديد، أزل علامة التعليق من السطر التالي:
+            // codeInput.value = ''; 
+            
+            // تنظيف الإطار (اختياري)
+            setTimeout(() => {
+                const doc = frame.contentDocument || frame.contentWindow.document;
+                doc.body.innerHTML = '';
+            }, 400); // بعد انتهاء حركة الانيميشن
+        }
+        
+        // وضع كود افتراضي للتجربة عند فتح الصفحة لأول مرة
+        window.onload = function() {
+            codeInput.value = `<!DOCTYPE html>
+<html dir="rtl">
+<body style="background: #f4f4f4; font-family: sans-serif; text-align: center; padding: 50px;">
+    <h1 style="color: #0e639c;">مرحباً بك!</h1>
+    <p>هذا مثال لكود يعمل فوراً.</p>
+    <button onclick="alert('يعمل بنجاح!')" style="padding: 10px 20px; cursor: pointer;">اضغط هنا</button>
+</body>
+</html>`;
         }
     </script>
+
 </body>
 </html>
