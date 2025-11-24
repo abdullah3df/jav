@@ -1,201 +1,316 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محرر الأكواد السريع</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <style>
-        /* --- تنسيقات عامة --- */
-        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; background: #1e1e1e; }
-
-        /* --- شاشة المحرر (Editor) --- */
-        #editor-container {
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            width: 100%;
-            transition: 0.3s ease;
-        }
-
-        .editor-header {
-            background: #252526;
-            color: #ccc;
-            padding: 10px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #333;
-        }
-
-        .editor-title { font-weight: bold; font-size: 14px; letter-spacing: 1px; }
-
-        textarea {
-            flex: 1;
-            background-color: #1e1e1e;
-            color: #d4d4d4;
-            border: none;
-            padding: 20px;
-            font-family: 'Consolas', 'Courier New', monospace;
-            font-size: 16px;
-            resize: none;
-            line-height: 1.5;
-        }
-        
-        /* زر التشغيل العائم */
-        .run-btn {
-            position: fixed;
-            bottom: 30px;
-            left: 30px; /* لأنه عربي */
-            background: #0e639c;
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 50px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: 0.2s;
-        }
-        
-        .run-btn:hover { background: #1177bb; transform: scale(1.05); }
-
-        /* --- شاشة المعاينة (Preview) --- */
-        #preview-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
-            z-index: 100;
-            transform: translateY(100%); /* مخفي في الأسفل */
-            transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1);
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* شريط الأدوات العلوي في وضع المعاينة */
-        .toolbar {
-            background: #333;
-            color: white;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            padding: 0 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            justify-content: space-between;
-        }
-
-        .toolbar-btn {
-            background: #d9534f;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: inherit;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 14px;
-        }
-        
-        .toolbar-btn:hover { background: #c9302c; }
-
-        iframe {
-            flex: 1;
-            width: 100%;
-            border: none;
-            background: white; /* صفحة بيضاء للكود */
-        }
-
-        /* كلاس لتفعيل ظهور المعاينة */
-        .show-preview {
-            transform: translateY(0) !important;
-        }
-
-    </style>
-</head>
-<body>
-
-    <div id="editor-container">
-        <div class="editor-header">
-            <span class="editor-title">محرر الأكواد المباشر</span>
-            <span style="font-size: 12px; opacity: 0.6;">HTML / CSS / JS</span>
-        </div>
-        <textarea id="code-input" placeholder="الصق الكود هنا (HTML, CSS, JS)..." spellcheck="false"></textarea>
-        
-        <button class="run-btn" onclick="runCode()">
-            <span class="material-icons">play_arrow</span>
-            معاينة الكود
-        </button>
-    </div>
-
-    <div id="preview-container">
-        <div class="toolbar">
-            <span>نتيجة الكود:</span>
-            <button class="toolbar-btn" onclick="closePreview()">
-                <span class="material-icons">close</span>
-                إغلاق وتعديل
-            </button>
-        </div>
-        <iframe id="result-frame"></iframe>
-    </div>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CIK COIN | The Golden Egg</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Titan+One&family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    
     <script>
-        // العناصر
-        const codeInput = document.getElementById('code-input');
-        const previewContainer = document.getElementById('preview-container');
-        const frame = document.getElementById('result-frame');
-
-        // دالة تشغيل الكود
-        function runCode() {
-            const code = codeInput.value;
-
-            // فتح وثيقة الإطار وكتابة الكود فيها
-            const doc = frame.contentDocument || frame.contentWindow.document;
-            doc.open();
-            doc.write(code);
-            doc.close();
-
-            // إظهار شاشة المعاينة
-            previewContainer.classList.add('show-preview');
-        }
-
-        // دالة إغلاق المعاينة
-        function closePreview() {
-            // إخفاء شاشة المعاينة
-            previewContainer.classList.remove('show-preview');
-            
-            // خيار: هل تريد مسح الكود القديم عند العودة؟ 
-            // إذا كنت تريد مسح الكود لتبدأ من جديد، أزل علامة التعليق من السطر التالي:
-            // codeInput.value = ''; 
-            
-            // تنظيف الإطار (اختياري)
-            setTimeout(() => {
-                const doc = frame.contentDocument || frame.contentWindow.document;
-                doc.body.innerHTML = '';
-            }, 400); // بعد انتهاء حركة الانيميشن
-        }
-        
-        // وضع كود افتراضي للتجربة عند فتح الصفحة لأول مرة
-        window.onload = function() {
-            codeInput.value = `<!DOCTYPE html>
-<html dir="rtl">
-<body style="background: #f4f4f4; font-family: sans-serif; text-align: center; padding: 50px;">
-    <h1 style="color: #0e639c;">مرحباً بك!</h1>
-    <p>هذا مثال لكود يعمل فوراً.</p>
-    <button onclick="alert('يعمل بنجاح!')" style="padding: 10px 20px; cursor: pointer;">اضغط هنا</button>
-</body>
-</html>`;
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        gold: '#FFC800',
+                        deep: '#0f0518',
+                        glass: 'rgba(255, 255, 255, 0.05)'
+                    },
+                    fontFamily: {
+                        title: ['Titan One', 'cursive'],
+                        body: ['Outfit', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-fast': 'pulse 1.5s infinite',
+                        'marquee': 'marquee 20s linear infinite',
+                    },
+                    keyframes: {
+                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-20px)' } },
+                        marquee: { '0%': { transform: 'translateX(0%)' }, '100%': { transform: 'translateX(-100%)' } }
+                    }
+                }
+            }
         }
     </script>
 
+    <style>
+        body { background-color: #0f0518; overflow-x: hidden; color: white; cursor: default; }
+        
+        #feather-canvas {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: radial-gradient(circle at center, #1a0b2e 0%, #000000 100%);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 200, 0, 0.2);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transform-style: preserve-3d;
+        }
+
+        .buy-btn {
+            background: linear-gradient(45deg, #FFC800, #FF9900);
+            box-shadow: 0 0 20px rgba(255, 200, 0, 0.4);
+            transition: all 0.2s;
+        }
+        .buy-btn:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(255, 200, 0, 0.6); }
+
+        .marquee-container { overflow: hidden; white-space: nowrap; background: #FFC800; color: black; padding: 10px 0; font-weight: 900; font-family: 'Titan One', cursive; border-top: 4px solid #fff; border-bottom: 4px solid #fff; }
+        
+        /* إخفاء رسالة النسخ */
+        #toast { opacity: 0; pointer-events: none; transform: translate(-50%, 20px); transition: all 0.3s ease; }
+        #toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+        /* --- ستايل ريش التفاعل مع اللمس (جديد) --- */
+        .cursor-feather {
+            position: fixed;
+            pointer-events: none; /* هام جداً: يمنع الريش من تعطيل الضغط */
+            width: 15px;
+            height: 15px;
+            background: white;
+            border-radius: 50% 0 50% 50%; /* شكل ورقة/ريشة */
+            z-index: 9999;
+            opacity: 0.8;
+            transform-origin: center;
+            animation: feather-fade 0.8s forwards; /* يختفي خلال ثانية */
+        }
+
+        @keyframes feather-fade {
+            0% { transform: scale(1) rotate(0deg); opacity: 0.8; }
+            100% { transform: scale(0.5) translateY(20px) rotate(45deg); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="font-body antialiased">
+
+    <canvas id="feather-canvas"></canvas>
+
+    <nav class="fixed w-full z-50 px-4 py-6" id="navbar">
+        <div class="max-w-6xl mx-auto glass-card px-6 py-4 flex justify-between items-center js-tilt">
+            <div class="flex items-center gap-3 transform translate-z-20">
+                <span class="text-3xl filter drop-shadow-lg">🥚</span> 
+                <span class="font-title text-2xl tracking-wide">CIK<span class="text-gold">COIN</span></span>
+            </div>
+            
+            <div class="hidden md:flex gap-8 font-bold text-sm uppercase tracking-widest text-gray-300">
+                <a href="#stats" class="hover:text-gold transition-colors">Stats</a>
+                <a href="#buy" class="hover:text-gold transition-colors">How to Buy</a>
+                <a href="https://t.me/cik3000" class="text-gold">Community</a>
+            </div>
+
+            <a href="#" class="hidden md:block bg-gold text-black font-title px-6 py-2 rounded-full hover:bg-white transition-all shadow-lg">
+                BUY $CIK
+            </a>
+            
+            <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="md:hidden text-gold text-2xl">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+
+        <div id="mobile-menu" class="hidden mt-2 glass-card p-6 flex flex-col gap-4 text-center z-50">
+            <a href="#stats" class="font-bold hover:text-gold">Stats</a>
+            <a href="https://t.me/cik3000" class="text-gold font-bold">Join Telegram</a>
+        </div>
+    </nav>
+
+    <section class="min-h-screen flex flex-col justify-center items-center text-center px-4 pt-32 pb-10 relative">
+        
+        <div class="mb-6 px-4 py-1 bg-red-600 rounded-full text-white text-xs font-bold animate-pulse-fast border-2 border-red-400">
+            🔥 HOT: NEXT 1000x GEM
+        </div>
+
+        <div class="relative w-full max-w-sm mb-6 z-10 js-tilt" data-tilt>
+            <div class="absolute inset-0 bg-gold/30 blur-[60px] rounded-full animate-pulse"></div>
+            
+            <img src="logo.jpg" 
+                 alt="CIK Golden Chick" 
+                 class="relative w-full h-auto object-contain drop-shadow-[0_0_50px_rgba(255,200,0,0.5)] animate-float"
+                 style="border-radius: 30px;"
+                 onerror="this.style.display='none'; document.getElementById('placeholder').style.display='flex';">
+            
+            <div id="placeholder" class="hidden w-64 h-64 bg-glass border-2 border-gold rounded-3xl mx-auto flex-col items-center justify-center p-4 text-gold">
+                <i class="fas fa-image text-4xl mb-2"></i>
+                <p class="font-bold">Missing Image!</p>
+                <p class="text-xs text-gray-300 mt-2">Rename your file to <br><code class="bg-black px-1 rounded">logo.jpg</code></p>
+            </div>
+        </div>
+
+        <h1 class="text-5xl md:text-8xl font-title text-white mb-4 drop-shadow-xl z-10 leading-tight">
+            THE GOLDEN <br><span class="text-gold">OPPORTUNITY</span>
+        </h1>
+        
+        <p class="text-lg md:text-xl text-gray-300 max-w-2xl mx-auto mb-8 font-bold z-10">
+            Don't just watch. <span class="text-gold">OWN IT.</span><br>
+            The most anticipated meme launch of 2025 is here.
+        </p>
+
+        <div class="flex flex-col md:flex-row gap-4 w-full max-w-lg z-10 mb-12">
+            <a href="#" class="buy-btn flex-1 py-4 rounded-xl text-black font-title text-xl flex items-center justify-center gap-2">
+                <i class="fas fa-rocket"></i> BUY $CIK NOW
+            </a>
+            <a href="https://t.me/cik3000" class="flex-1 py-4 glass-card hover:bg-white/10 text-white font-title text-xl flex items-center justify-center gap-2">
+                <i class="fab fa-telegram"></i> JOIN GANG
+            </a>
+        </div>
+
+        <div id="stats" class="grid grid-cols-1 md:grid-cols-3 gap-4 w-full max-w-4xl z-10">
+            <div class="glass-card p-6 text-center hover:scale-105 transition-transform">
+                <div class="text-gold font-title text-3xl mb-1">300B</div>
+                <div class="text-xs text-gray-400 uppercase font-bold tracking-widest">Total Supply</div>
+            </div>
+            <div class="glass-card p-6 text-center hover:scale-105 transition-transform">
+                <div class="text-orange-500 font-title text-3xl mb-1">Massive</div>
+                <div class="text-xs text-gray-400 uppercase font-bold tracking-widest">Burn Incoming</div>
+            </div>
+            <div class="glass-card p-6 text-center hover:scale-105 transition-transform">
+                <div class="text-white font-title text-3xl mb-1">0% / 0%</div>
+                <div class="text-xs text-gray-400 uppercase font-bold tracking-widest">Buy/Sell Tax</div>
+            </div>
+        </div>
+
+    </section>
+
+    <div class="marquee-container relative z-20 transform -rotate-1 shadow-lg">
+        <div class="inline-block animate-marquee">
+            🚀 DON'T MISS THE MOON • 🥚 HATCHING MILLIONAIRES • 💎 BUY $CIK NOW • 🔥 300 BILLION SUPPLY • 🚀 DON'T MISS THE MOON • 🥚 HATCHING MILLIONAIRES • 💎 BUY $CIK NOW • 🔥 300 BILLION SUPPLY
+        </div>
+    </div>
+
+    <section class="py-16 px-4 text-center max-w-3xl mx-auto">
+        <h2 class="font-title text-3xl text-white mb-8">CONTRACT ADDRESS</h2>
+        
+        <div onclick="copyData('0x182976fac92c6282c4afa9f63b3ff52f8e54570d')" class="glass-card p-4 flex flex-col md:flex-row items-center justify-between gap-4 cursor-pointer hover:border-gold group active:scale-95 transition-transform">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-gold text-black rounded-full flex items-center justify-center text-xl font-bold">CA</div>
+                <div class="text-left">
+                    <div class="font-mono text-gold md:text-xl truncate max-w-[250px] md:max-w-full">0x1829...570d</div>
+                    <div class="text-xs text-gray-500">Tap to Copy Address</div>
+                </div>
+            </div>
+            <div class="text-green-400 font-bold opacity-0 group-hover:opacity-100 transition-opacity">COPY!</div>
+        </div>
+
+        <div class="mt-12 flex justify-center gap-6 text-2xl">
+            <a href="https://x.com/cik_coin" class="text-gray-400 hover:text-white transition-colors"><i class="fab fa-twitter"></i></a>
+            <a href="mailto:Info.cik@cikcoin.art" class="text-gray-400 hover:text-white transition-colors"><i class="fas fa-envelope"></i></a>
+        </div>
+        <p class="text-gray-600 mt-6 text-sm">© 2025 CIK COIN.</p>
+    </section>
+
+    <div id="toast" class="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-white text-black px-8 py-3 rounded-full font-bold shadow-[0_0_30px_rgba(255,255,255,0.5)] z-[60] flex items-center gap-2">
+        <i class="fas fa-check-circle text-green-500"></i> Address Copied!
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
+
+    <script>
+        // Tilt Effect
+        VanillaTilt.init(document.querySelectorAll(".js-tilt"), { max: 10, speed: 400, glare: true, "max-glare": 0.2 });
+
+        // Copy Function
+        function copyData(text) {
+            navigator.clipboard.writeText(text);
+            const toast = document.getElementById('toast');
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // --- Three.js Background Feathers ---
+        const initFeathers = () => {
+            const canvas = document.getElementById('feather-canvas');
+            const scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x0f0518, 0.002);
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+
+            const createFeatherTexture = () => {
+                const c = document.createElement('canvas');
+                c.width = 32; c.height = 64;
+                const ctx = c.getContext('2d');
+                ctx.fillStyle = '#FFC800'; 
+                ctx.beginPath(); ctx.ellipse(16, 32, 8, 25, 0, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                ctx.beginPath(); ctx.ellipse(16, 32, 4, 20, 0, 0, Math.PI*2); ctx.fill();
+                return new THREE.CanvasTexture(c);
+            };
+
+            const geometry = new THREE.PlaneGeometry(0.08, 0.25);
+            const material = new THREE.MeshBasicMaterial({ 
+                map: createFeatherTexture(), 
+                transparent: true, opacity: 0.6, 
+                side: THREE.DoubleSide, depthWrite: false 
+            });
+
+            const feathers = [];
+            for(let i=0; i<400; i++) {
+                const f = new THREE.Mesh(geometry, material);
+                f.position.set((Math.random()-0.5)*20, (Math.random()-0.5)*20, (Math.random()-0.5)*10);
+                f.rotation.set(Math.random()*Math.PI, Math.random()*Math.PI, Math.random()*Math.PI);
+                f.userData = { speed: 0.002 + Math.random()*0.005, wobble: Math.random()*10 };
+                scene.add(f);
+                feathers.push(f);
+            }
+            camera.position.z = 5;
+
+            const animate = () => {
+                requestAnimationFrame(animate);
+                const time = Date.now() * 0.001;
+                feathers.forEach(f => {
+                    f.position.y -= f.userData.speed;
+                    f.position.x += Math.sin(time + f.userData.wobble) * 0.002;
+                    f.rotation.x += 0.01;
+                    if(f.position.y < -10) f.position.y = 10;
+                });
+                renderer.render(scene, camera);
+            };
+            animate();
+            window.onresize = () => {
+                camera.aspect = window.innerWidth/window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+        };
+        initFeathers();
+
+        // --- Cursor Trail Effect (Touch/Mouse) ---
+        // كود الريش الأبيض المتفاعل مع اللمس
+        let lastTrailTime = 0;
+        const createTrail = (x, y) => {
+            const now = Date.now();
+            if (now - lastTrailTime < 50) return; // تحديد سرعة التوليد (Throttling)
+            lastTrailTime = now;
+
+            const trail = document.createElement('div');
+            trail.className = 'cursor-feather';
+            trail.style.left = x + 'px';
+            trail.style.top = y + 'px';
+            // تغيير بسيط عشوائي في الحجم والدوران
+            const rotation = Math.random() * 360;
+            trail.style.transform = `rotate(${rotation}deg)`;
+            
+            document.body.appendChild(trail);
+
+            // حذف العنصر بعد انتهاء الحركة
+            setTimeout(() => {
+                trail.remove();
+            }, 800);
+        };
+
+        document.addEventListener('mousemove', (e) => createTrail(e.clientX, e.clientY));
+        document.addEventListener('touchmove', (e) => {
+            const touch = e.touches[0];
+            createTrail(touch.clientX, touch.clientY);
+        });
+
+    </script>
 </body>
 </html>
